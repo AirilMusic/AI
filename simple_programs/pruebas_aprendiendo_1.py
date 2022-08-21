@@ -24,7 +24,7 @@ precio = np.array([20, 30, 24, 30, 10, 25, 20, 12, 6, 8], dtype=int) #en euros
 
 #Estructura de la red:
 model = tf.keras.Sequential([
-    tf.keras.layers.Flatten(input_shape=[6]), #input = variables
+    tf.keras.layers.Flatten(input_shape=[7]), #input = variables
     tf.keras.layers.Dense(1000, activation = tf.nn.relu), #hidden layer 1
     tf.keras.layers.Dense(1000, activation = tf.nn.relu), #hidden layer 2
     tf.keras.layers.Dense(1000, activation = tf.nn.relu), #hidden layer 3
