@@ -32,8 +32,8 @@ modelR.compile(optimizer = tf.keras.optimizers.Adam(0.1), loss = 'mean_squared_e
 modelU.compile(optimizer = tf.keras.optimizers.Adam(0.1), loss = 'mean_squared_error')
 
 print("Starting training...")
-historyR = modelR.fit(weeks, russianDeads, epoch = 500, verbose=False)
-historyU = modelU.fit(weeks, ukranianDeads, epoch = 500, verbose=False)
+historyR = modelR.fit(weeks, russianDeads, epochs = 500, verbose=False)
+historyU = modelU.fit(weeks, ukranianDeads, epochs = 500, verbose=False)
 print("Trainning ended uwu")
 
 print("Russian model acuracy: ", modelR.evaluate(trainWeeks, trainRussianDeads))
