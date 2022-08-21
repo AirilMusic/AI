@@ -13,7 +13,7 @@ trainRussianDeads = np.array([], dtype=int)
 trainUkranianDeads = np.array([], dtype=int)
 
 modelR = tf.keras.Sequential([
-    tf.keras.layers.Flatten(input_shape=[2]),
+    tf.keras.layers.Flatten(input_shape=[1]),
     tf.keras.layers.Dense(1000, activation = tf.nn.relu),
     tf.keras.layers.Dense(1000, activation = tf.nn.relu),
     tf.keras.layers.Dense(1000, activation = tf.nn.relu),
@@ -21,7 +21,7 @@ modelR = tf.keras.Sequential([
 ])
 
 modelU = tf.keras.Sequential([
-    tf.keras.layers.Flatten(input_shape=[2]),
+    tf.keras.layers.Flatten(input_shape=[1]),
     tf.keras.layers.Dense(1000, activation = tf.nn.relu),
     tf.keras.layers.Dense(1000, activation = tf.nn.relu),
     tf.keras.layers.Dense(1000, activation = tf.nn.relu),
