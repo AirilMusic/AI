@@ -4,13 +4,13 @@
 import tensorflow as tf
 import numpy as np
 
-weeks = tf.array([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26], dtype=int)
-russianDeads = tf.array([], dtype=int)
-ukranianDeads = tf.array([], dtype=int)
+weeks = np.array([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26], dtype=int)
+russianDeads = np.array([], dtype=int)
+ukranianDeads = np.array([], dtype=int)
 
-trainWeeks = tf.array([], dtype=int)
-trainRussianDeads = tf.array([], dtype=int)
-trainUkranianDeads = tf.array([], dtype=int)
+trainWeeks = np.array([], dtype=int)
+trainRussianDeads = np.array([], dtype=int)
+trainUkranianDeads = np.array([], dtype=int)
 
 modelR = tf.keras.Sequential([
     tf.keras.layers.Flatten(input_shape=[2]),
