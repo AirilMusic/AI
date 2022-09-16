@@ -18,6 +18,7 @@ model = tf.keras.Sequential([
     tf.keras.layers.Dense(1500, activation = tf.nn.relu),
     tf.keras.layers.Dense(1500, activation = tf.nn.relu),
     tf.keras.layers.Dense(1000, activation = tf.nn.relu),
+    tf.keras.layers.Dropout(0.2),
     tf.keras.layers.Dense(1)
 ])
 
