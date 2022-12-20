@@ -1,3 +1,5 @@
+###### WORK IN PROGRESS ######
+
 import tensorflow as tf
 import tensorflow_datasets as ds
 import numpy as np
@@ -53,4 +55,4 @@ model = tf.keras.models.Sequential([
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
 tensorboardModel = tf.keras.callbacks.TensorBoard(log_dir='logs/training')
-model.fit(X, Y, batch_size=32, validation_split=0.15,epochs=400,callbacks=[tensorboardModel])
+model.fit(X, Y, batch_size=32, validation_split=0.15,epochs=400,callbacks=[tensorboardModel]) ### aqui peta y no se porque 
