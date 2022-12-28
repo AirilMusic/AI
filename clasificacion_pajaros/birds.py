@@ -9,7 +9,7 @@ import cv2
 
 data, metadata = ds.load('caltech_birds2011', as_supervised=True, with_info=True)
 plt.figure(figsize=(20,20))
-img_size = 160
+img_size = 170
 
 training_data = []
 
@@ -23,24 +23,57 @@ y = [] #tags
 for image, tag in training_data:
   x.append(image)
   y.append(tag)
+  
+#DATA GENERATOR (modifica las fotos del dataset para generar el doble de fotos; rotandolas, desplazandolas...)
+datagen = tf.keras.preprocessing.image.ImageDataGenerator(
+    rotation_range=30,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    shear_range=15,
+    zoom_range=[0.7, 1.4],
+    horizontal_flip=True,
+    vertical_flip=True
+)
 
+x2 = x
+
+datagen.fit(x2)
+
+for i in range(len(x)): #añade las fotos modificadas al las del dataset
+  x.append(x2[i])
+  y.append(y[i])
+  
 x = np.array(x)
 y = np.array(y)
 
-model = tf.keras.models.Sequential([
-    tf.keras.layers.Conv2D(32, (3,3), activation='relu', input_shape=(160,160,3)),
-    tf.keras.layers.MaxPooling2D(2,2),
-    tf.keras.layers.Conv2D(64, (3,3), activation='relu'),
-    tf.keras.layers.MaxPooling2D(2,2),
-    tf.keras.layers.Conv2D(128, (3,3), activation='relu'),
-    tf.keras.layers.MaxPooling2D(2,2),
-    
-    tf.keras.layers.Dropout(0.5),
-    tf.keras.layers.Flatten(),
-    tf.keras.layers.Dense(250,activation='relu'),
-    tf.keras.layers.Dense(1,activation='relu')
+modeloAD = tf.keras.models.Sequential([
+  tf.keras.layers.Conv2D(32, (3,3), activation='relu', input_shape=(170, 170, 3)),
+  tf.keras.layers.MaxPooling2D(2, 2),
+  tf.keras.layers.Conv2D(64, (3,3), activation='relu'),
+  tf.keras.layers.MaxPooling2D(2, 2),
+  tf.keras.layers.Conv2D(128, (3,3), activation='relu'),
+  tf.keras.layers.MaxPooling2D(2, 2),
+
+  tf.keras.layers.Dropout(0.5),
+  tf.keras.layers.Flatten(),
+  tf.keras.layers.Dense(300, activation='relu'),
+  tf.keras.layers.Dense(250, activation='relu'),
+  tf.keras.layers.Dense(1, activation='sigmoid')
 ])
 
-model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+modeloAD.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-model.fit(x, y, batch_size=32, epochs=400, verbose=True, validation_split=0.15)
+x_training = x[:9000]
+x_test = x[9000:]
+
+y_training = y[:9000]
+y_test = y[9000:]
+
+data_gen_entrenamiento = datagen.flow(x_training, y_training, batch_size=32)
+
+modeloAD.fit(
+    data_gen_entrenamiento,
+    epochs=100, batch_size=32,
+    validation_data=(x_test, y_test),
+    steps_per_epoch=int(np.ceil(len(x_training) / float(32))),
+    validation_steps=int(np.ceil(len(y_training) / float(32))))
