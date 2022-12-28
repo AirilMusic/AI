@@ -58,7 +58,7 @@ modeloAD = tf.keras.models.Sequential([
   tf.keras.layers.Flatten(),
   tf.keras.layers.Dense(300, activation='relu'),
   tf.keras.layers.Dense(250, activation='relu'),
-  tf.keras.layers.Dense(1, activation='sigmoid')
+  tf.keras.layers.Dense(1, activation='relu')
 ])
 
 modeloAD.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
