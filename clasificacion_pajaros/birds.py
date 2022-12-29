@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import cv2
 
 data, metadata = ds.load('caltech_birds2011', as_supervised=True, with_info=True)
-plt.figure(figsize=(20,20))
 img_size = 170
 
 training_data = []
