@@ -35,11 +35,15 @@ datagen = tf.keras.preprocessing.image.ImageDataGenerator(
 )
 
 x2 = x
+x3 = x
 
 datagen.fit(x2)
+datagen.fit(x3)
 
 for i in range(len(x)): #añade las fotos modificadas al las del dataset
   x.append(x2[i])
+  y.append(y[i])
+  x.append(x3[i])
   y.append(y[i])
   
 x = np.array(x)
