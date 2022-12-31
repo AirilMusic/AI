@@ -18,17 +18,26 @@ for i in range(len(pid0)):
   x1.append([int(pid1), tid[i]])
 
 
-x = np.array([x1])
-y = np.array([45991,46005,46052,45826,45963,45821,45995,45488,42473,37275])
+x = x1
+y = [45991,46005,46052,45826,45963,45821,45995,45488,42473,37275]
 
-x_training = x[:int(len(x1)*0.5)]
-x_test = x[int(len(x1)*0.5):]
+x_training = x[:int(len(x1)*0.85)]
+x_test = x[int(len(x1)*0.85):]
 
-y_training = y[:int(len(x1)*0.5)]
-y_test = y[int(len(x1)*0.5):]
+y_training = y[:int(len(x1)*0.85)]
+y_test = y[int(len(x1)*0.85):]
+
+x = np.array(x, dtype=float)
+y = np.array(y, dtype=float)
+x_test = np.array(x_test, dtype=float)
+y_test = np.array(y_test, dtype=float)
+x_train = np.array(x_training, dtype=float)
+y_train = np.array(y_training, dtype=float)
 
 model = tf.keras.models.Sequential([
-    tf.keras.layers.Dense(2, activation='relu'),
+    tf.keras.layers.Flatten(input_shape=[2]), 
+    tf.keras.layers.Dense(200, activation='relu'),
+    tf.keras.layers.Dense(200, activation='relu'),
     tf.keras.layers.Dense(200, activation='relu'),
     tf.keras.layers.Dropout(0.5),
     tf.keras.layers.Dense(200, activation='relu'),
@@ -37,9 +46,9 @@ model = tf.keras.models.Sequential([
     tf.keras.layers.Dense(1, activation='relu')
 ])
 
-model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
+model.compile(optimizer=tf.keras.optimizers.Adam(0.1), loss='mean_squared_error', metrics=['accuracy'])
 
 model.fit(
-    x, y,
+    x_train, y_train,
     epochs=1000, batch_size=32,
     validation_data=(x_test, y_test))
