@@ -55,4 +55,6 @@ img_embeddings = tf.reduce_mean(patches_embeddings, axis=1)
 classifier = tf.keras.layers.Dense(metadata.features['label'].num_classes, activation='softmax')
 logits = classifier(img_embeddings)
 
-model = tf.
+model = tf.keras.Model(inputs=model.inputs, outputs=logits)
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+model.fit(x, y, epochs=5, batch_size=32)
