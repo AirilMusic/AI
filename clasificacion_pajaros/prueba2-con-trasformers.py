@@ -26,7 +26,7 @@ y = [] #tags
 for image, tag in training_data:
   x.append(image)
   y.append(tag)
-
+  
 # Transformar las imágenes en patches
 patches = []
 for img in x:
@@ -37,10 +37,14 @@ for img in x:
         rates=[1, 1, 1, 1],
         padding='VALID'
     )
-    patches.append(tf.reshape(patch, [img_size//16*img_size//16, img_size, img_size, 3]))
+    patch = tf.reshape(patch, [img_size//16, img_size//16, -1, 3])
+    patch = tf.transpose(patch, [2, 0, 1, 3])
+    patches.append(tf.reshape(patch, [-1, img_size//16, img_size//16, 3]))
+    patches.append(patch)
 
 x = tf.stack(patches, axis=0)
 x = tf.reshape(x, [-1, img_size, img_size, 3])
+x = tf.cast(x, tf.float32)
 x = x / 255.
 y = np.array(y)
 
