@@ -2,12 +2,14 @@
 
 # Una forma de mejorar este modelo de clasificación de imágenes utilizando transformers sería reemplazar la arquitectura de red neuronal convolucional (ConvNet) por un modelo de transformers pre-entrenado como BERT o ViT. Este tipo de modelos son muy eficaces para la tarea de clasificación de imágenes a nivel de pixels utilizando una técnica conocida como patch embeddings.
 
-# pip install transformers
+#! pip install transformers
+#! pip install opencv-python
 
 import tensorflow as tf
 import tensorflow_datasets as ds
 import numpy as np
 import transformers
+import cv2
 
 data, metadata = ds.load('caltech_birds2011', as_supervised=True, with_info=True)
 img_size = 170
