@@ -14,7 +14,7 @@ def take_photo(): # saca una foto y return del nombre y el directorio
         i += 1
         
     file_path = images_dir / base_name
-    call(["raspistill", "-o", str(file_path), "-w", "170", "-h", "170"]) # saca la foto
+    call(["raspistill", "-o", str(file_path), "-w", "170", "-h", "170"]) # saca la foto (el tamaño depende de las neuronas de entrada de la red)
     return str(file_path)
 
 def chose_bird(imagen): # return la especie de pajaro
