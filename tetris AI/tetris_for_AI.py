@@ -74,24 +74,32 @@ tablero = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # coordenadas: tablero[y[x]]
            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
-piezaLibre = True # para saber si la pieza que esta bajando se ha colocado o no
-posicion_pieza = [[0,0], [0,0], [0,0], [0,0]] #[x,y] pero la y es al reves, osea 0 es arriba y 24 es abajo
+posicion_pieza = [[0,0], [0,0], [0,0], [0,0]] #[y,x]
 pieza = 0
 
-def mover(lado, posicion_pieza, tablero, pieza, piezaLibre):
+def mover(lado, posicion_pieza, tablero, pieza):
     if lado == "izquierda": 
-        pass
-    
-    elif lado == "derecha":
-        pass
-    
-    elif lado == "abajo":
-        if posicion_pieza[0][0] != len(tablero)-1 and posicion_pieza[1][0] != len(tablero)-1 and posicion_pieza[2][0] != len(tablero)-1 and posicion_pieza[3][0] != len(tablero)-1 and (tablero[posicion_pieza[0][0]+1][posicion_pieza[0][1]] == 0 or tablero[posicion_pieza[0][0]+1][posicion_pieza[0][1]] == 8) and (tablero[posicion_pieza[1][0]+1][posicion_pieza[1][1]] == 0 or tablero[posicion_pieza[1][0]+1][posicion_pieza[1][1]] == 8) and (tablero[posicion_pieza[2][0]+1][posicion_pieza[2][1]] == 0 or tablero[posicion_pieza[2][0]+1][posicion_pieza[2][1]] == 8) and (tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]] == 0 or tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]] == 8):
+        if posicion_pieza[0][1] != 0 and posicion_pieza[1][1] != 0 and posicion_pieza[2][1] != 0 and posicion_pieza[3][1] != 0 and (tablero[posicion_pieza[0][0]][posicion_pieza[0][1]-1] == 0 or tablero[posicion_pieza[0][0]][posicion_pieza[0][1]-1] == 8) and (tablero[posicion_pieza[1][0]][posicion_pieza[1][1]-1] == 0 or tablero[posicion_pieza[1][0]][posicion_pieza[1][1]-1] == 8) and (tablero[posicion_pieza[2][0]][posicion_pieza[2][1]-1] == 0 or tablero[posicion_pieza[2][0]][posicion_pieza[2][1]-1] == 8) and (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 8):
             for i in range(4):
                 tablero[posicion_pieza[i][0]][posicion_pieza[i][1]] = 0
             for i in range(4):
+                posicion_pieza[i][1] -= 1
+                tablero[posicion_pieza[i][0]][posicion_pieza[i][1]] = 8
+    
+    elif lado == "derecha": 
+        if posicion_pieza[0][1] != len(tablero[0])-1 and posicion_pieza[1][1] != len(tablero[0])-1 and posicion_pieza[2][1] != len(tablero[0])-1 and posicion_pieza[3][1] != len(tablero[0])-1 and (tablero[posicion_pieza[0][0]][posicion_pieza[0][1]+1] == 0 or tablero[posicion_pieza[0][0]][posicion_pieza[0][1]+1] == 8) and (tablero[posicion_pieza[1][0]][posicion_pieza[1][1]+1] == 0 or tablero[posicion_pieza[1][0]][posicion_pieza[1][1]+1] == 8) and (tablero[posicion_pieza[2][0]][posicion_pieza[2][1]+1] == 0 or tablero[posicion_pieza[2][0]][posicion_pieza[2][1]+1] == 8) and (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]+1] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]+1] == 8):
+            for i in range(4):
+                tablero[posicion_pieza[i][0]][posicion_pieza[i][1]] = 0
+            for i in range(4):
+                posicion_pieza[i][1] += 1
+                tablero[posicion_pieza[i][0]][posicion_pieza[i][1]] = 8
+    
+    elif lado == "abajo":
+        if posicion_pieza[0][0] != len(tablero)-1 and posicion_pieza[1][0] != len(tablero)-1 and posicion_pieza[2][0] != len(tablero)-1 and posicion_pieza[3][0] != len(tablero)-1 and (tablero[posicion_pieza[0][0]+1][posicion_pieza[0][1]] == 0 or tablero[posicion_pieza[0][0]+1][posicion_pieza[0][1]] == 8) and (tablero[posicion_pieza[1][0]+1][posicion_pieza[1][1]] == 0 or tablero[posicion_pieza[1][0]+1][posicion_pieza[1][1]] == 8) and (tablero[posicion_pieza[2][0]+1][posicion_pieza[2][1]] == 0 or tablero[posicion_pieza[2][0]+1][posicion_pieza[2][1]] == 8) and (tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]] == 0 or tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]] == 8):
+            for i in range(4): #esto borra la pieza para volverla a dibujar
+                tablero[posicion_pieza[i][0]][posicion_pieza[i][1]] = 0
+            for i in range(4):
                 posicion_pieza[i][0] += 1
-                print(posicion_pieza[i])
                 tablero[posicion_pieza[i][0]][posicion_pieza[i][1]] = 8
         else:
             for i in range(4):
@@ -115,7 +123,6 @@ def destruirLinea(tablero):
 
 def nueva_pieza(posicion_pieza, tablero):
     destruirLinea(tablero) #para checkear si la vez anterior que se ha puesto una pieza, se ha rellenado alguna linea, y si eso la borra
-    piezaLibre = False
     pieza = random.randint(1,7) # crea una nueva pieza
     if pieza == 1:
         posicion_pieza = [[0,0], [1,0], [2,0], [3,0]]
@@ -146,13 +153,12 @@ while True:
     draw_board(tablero)
     pygame.display.flip()
     
-    inpt = ""   # INPUT DE LA IA
     inpt = input()
     if inpt == "Abajo":
-        posicion_pieza, pieza = mover("abajo", posicion_pieza, tablero, pieza, piezaLibre)
+        posicion_pieza, pieza = mover("abajo", posicion_pieza, tablero, pieza)
     elif inpt == "Derecha":
-        posicion_pieza = mover("derecha", posicion_pieza, tablero, pieza, piezaLibre)
+        posicion_pieza, pieza = mover("derecha", posicion_pieza, tablero, pieza)
     elif inpt == "Izquierda":
-        posicion_pieza = mover("izquierda", posicion_pieza, tablero, pieza, piezaLibre)
+        posicion_pieza, pieza = mover("izquierda", posicion_pieza, tablero, pieza)
     elif inpt == "Rotar":
-        posicion_pieza = mover("rotar", posicion_pieza, tablero, pieza, piezaLibre)
+        posicion_pieza, pieza = mover("rotar", posicion_pieza, tablero, pieza)
