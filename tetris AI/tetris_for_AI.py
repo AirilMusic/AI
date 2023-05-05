@@ -1,6 +1,7 @@
 import pygame # para la representacion visual del juego para humanos, para ver lo que hace la IA y en que vuelta va
 import random
 import time
+import copy
  
 BLACK = (0, 0, 0)                    # 0
 BLUE = (0, 0, 255)                   # 1
@@ -46,38 +47,41 @@ def draw_board(board):
 #    ####     #       #    ##     ##    ##      #
 #             ###   ###    ##    ##      ##    ###
 
-tablero = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # coordenadas: tablero[y[x]]
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # SI ALGUNA PIEZA TOCA ESTA LINEA DESPUES DE HABERSE COLOCADO = GAME OVER, estas dos lineas son como un buffer antes de hacer el primer movimiento
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+tablero_base = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # coordenadas: tablero[y[x]]
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # SI ALGUNA PIEZA TOCA ESTA LINEA DESPUES DE HABERSE COLOCADO = GAME OVER, estas dos lineas son como un buffer antes de hacer el primer movimiento
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+
+tablero = copy.deepcopy(tablero_base)
 
 posicion_pieza = [[0,0], [0,0], [0,0], [0,0]] #[y,x]
 pieza = 0
+count = 0
 
-def mover(lado, posicion_pieza, tablero, pieza):
+def mover(lado, posicion_pieza, tablero, pieza, count):
     if lado == "izquierda": 
         if posicion_pieza[0][1] != 0 and posicion_pieza[1][1] != 0 and posicion_pieza[2][1] != 0 and posicion_pieza[3][1] != 0 and (tablero[posicion_pieza[0][0]][posicion_pieza[0][1]-1] == 0 or tablero[posicion_pieza[0][0]][posicion_pieza[0][1]-1] == 8) and (tablero[posicion_pieza[1][0]][posicion_pieza[1][1]-1] == 0 or tablero[posicion_pieza[1][0]][posicion_pieza[1][1]-1] == 8) and (tablero[posicion_pieza[2][0]][posicion_pieza[2][1]-1] == 0 or tablero[posicion_pieza[2][0]][posicion_pieza[2][1]-1] == 8) and (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 8):
             for i in range(4):
@@ -96,7 +100,7 @@ def mover(lado, posicion_pieza, tablero, pieza):
     
     elif lado == "abajo":
         if posicion_pieza[0][0] != len(tablero)-1 and posicion_pieza[1][0] != len(tablero)-1 and posicion_pieza[2][0] != len(tablero)-1 and posicion_pieza[3][0] != len(tablero)-1 and (tablero[posicion_pieza[0][0]+1][posicion_pieza[0][1]] == 0 or tablero[posicion_pieza[0][0]+1][posicion_pieza[0][1]] == 8) and (tablero[posicion_pieza[1][0]+1][posicion_pieza[1][1]] == 0 or tablero[posicion_pieza[1][0]+1][posicion_pieza[1][1]] == 8) and (tablero[posicion_pieza[2][0]+1][posicion_pieza[2][1]] == 0 or tablero[posicion_pieza[2][0]+1][posicion_pieza[2][1]] == 8) and (tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]] == 0 or tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]] == 8):
-            for i in range(4): #esto borra la pieza para volverla a dibujar
+            for i in range(4):
                 tablero[posicion_pieza[i][0]][posicion_pieza[i][1]] = 0
             for i in range(4):
                 posicion_pieza[i][0] += 1
@@ -105,11 +109,12 @@ def mover(lado, posicion_pieza, tablero, pieza):
             for i in range(4):
                 tablero[posicion_pieza[i][0]][posicion_pieza[i][1]] = pieza
             posicion_pieza, pieza = nueva_pieza(posicion_pieza, tablero)
+            count += 1
                     
     elif lado == "rotar":
         pass
     
-    return posicion_pieza, pieza
+    return posicion_pieza, pieza, count
 
 def destruirLinea(tablero):
     for i in range(len(tablero)):
@@ -147,6 +152,7 @@ screen.fill((0, 0, 0))
 posicion_pieza, pieza = nueva_pieza(posicion_pieza, tablero)
 while True:
     print(posicion_pieza)
+
     for i in range(len(tablero)):
         print(tablero[i])
     
@@ -155,10 +161,20 @@ while True:
     
     inpt = input()
     if inpt == "Abajo":
-        posicion_pieza, pieza = mover("abajo", posicion_pieza, tablero, pieza)
+        posicion_pieza, pieza, count = mover("abajo", posicion_pieza, tablero, pieza, count)
     elif inpt == "Derecha":
-        posicion_pieza, pieza = mover("derecha", posicion_pieza, tablero, pieza)
+        posicion_pieza, pieza, count = mover("derecha", posicion_pieza, tablero, pieza, count)
     elif inpt == "Izquierda":
-        posicion_pieza, pieza = mover("izquierda", posicion_pieza, tablero, pieza)
+        posicion_pieza, pieza, count = mover("izquierda", posicion_pieza, tablero, pieza, count)
     elif inpt == "Rotar":
-        posicion_pieza, pieza = mover("rotar", posicion_pieza, tablero, pieza)
+        posicion_pieza, pieza, count = mover("rotar", posicion_pieza, tablero, pieza, count)
+    
+    for i in range(2):
+        for a in tablero[i]:
+            if a != 0 and a != 8:
+                print("Game Over!")
+                print("Points:", count)
+                count = 0
+                tablero = copy.deepcopy(tablero_base)
+                nueva_pieza(posicion_pieza, tablero)
+                break
