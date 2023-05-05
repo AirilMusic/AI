@@ -173,7 +173,7 @@ while True:
         for a in tablero[i]:
             if a != 0 and a != 8:
                 print("Game Over!")
-                print("Points:", count)
+                print("Score:", count)
                 count = 0
                 tablero = copy.deepcopy(tablero_base)
                 nueva_pieza(posicion_pieza, tablero)
