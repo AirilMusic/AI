@@ -4,6 +4,9 @@ import time
 import copy
 
 reward = 0
+alfa = 0.25 # valor de aprendizaje/modificacion en machine learning
+ganma = 0.8 # si es proximo a 0 busca recompensas a corto plazo, y si es cercano a 1 las busca a largo plazo
+
 game = 1
  
 BLACK = (0, 0, 0)                    # 0
@@ -87,7 +90,7 @@ rotacion = 0 #0, 1, 2, 3
 pieza = 0
 count = 0
 
-def mover(lado, posicion_pieza, tablero, pieza, count, rotacion):
+def mover(lado, posicion_pieza, tablero, pieza, count, rotacion, reward):
     if lado == "izquierda": 
         if posicion_pieza[0][1] != 0 and posicion_pieza[1][1] != 0 and posicion_pieza[2][1] != 0 and posicion_pieza[3][1] != 0 and (tablero[posicion_pieza[0][0]][posicion_pieza[0][1]-1] == 0 or tablero[posicion_pieza[0][0]][posicion_pieza[0][1]-1] == 8) and (tablero[posicion_pieza[1][0]][posicion_pieza[1][1]-1] == 0 or tablero[posicion_pieza[1][0]][posicion_pieza[1][1]-1] == 8) and (tablero[posicion_pieza[2][0]][posicion_pieza[2][1]-1] == 0 or tablero[posicion_pieza[2][0]][posicion_pieza[2][1]-1] == 8) and (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 8):
             for i in range(4):
@@ -181,13 +184,13 @@ while True:
     inpt = random.choice(["Abajo", "Izquierda", "Derecha", "Rotar"])
     
     if inpt == "Abajo":
-        posicion_pieza, pieza, count = mover("abajo", posicion_pieza, tablero, pieza, count, rotacion)
+        posicion_pieza, pieza, count = mover("abajo", posicion_pieza, tablero, pieza, count, rotacion, reward)
     elif inpt == "Derecha":
-        posicion_pieza, pieza, count = mover("derecha", posicion_pieza, tablero, pieza, count, rotacion)
+        posicion_pieza, pieza, count = mover("derecha", posicion_pieza, tablero, pieza, count, rotacion, reward)
     elif inpt == "Izquierda":
-        posicion_pieza, pieza, count = mover("izquierda", posicion_pieza, tablero, pieza, count, rotacion)
+        posicion_pieza, pieza, count = mover("izquierda", posicion_pieza, tablero, pieza, count, rotacion, reward)
     elif inpt == "Rotar":
-        posicion_pieza, pieza, count = mover("rotar", posicion_pieza, tablero, pieza, count, rotacion)
+        posicion_pieza, pieza, count = mover("rotar", posicion_pieza, tablero, pieza, count, rotacion, reward)
     
     for i in range(2):
         for a in tablero[i]:
