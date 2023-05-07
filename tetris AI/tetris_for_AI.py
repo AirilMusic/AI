@@ -2,6 +2,9 @@ import pygame # para la representacion visual del juego para humanos, para ver l
 import random
 import time
 import copy
+
+reward = 0
+game = 1
  
 BLACK = (0, 0, 0)                    # 0
 BLUE = (0, 0, 255)                   # 1
@@ -15,6 +18,8 @@ SELECT = (255, 255, 255)             # 8 = pieza controlada
  
 pygame.init()
 screen = pygame.display.set_mode((200, 540))
+
+speed = 0.00001
 
 def draw_cell(x, y, color):
     pygame.draw.rect(screen, color, (x * 20, y * 20, 20, 20))
@@ -78,10 +83,11 @@ tablero_base = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # coordenadas: tablero[y[x]]
 tablero = copy.deepcopy(tablero_base)
 
 posicion_pieza = [[0,0], [0,0], [0,0], [0,0]] #[y,x]
+rotacion = 0 #0, 1, 2, 3
 pieza = 0
 count = 0
 
-def mover(lado, posicion_pieza, tablero, pieza, count):
+def mover(lado, posicion_pieza, tablero, pieza, count, rotacion):
     if lado == "izquierda": 
         if posicion_pieza[0][1] != 0 and posicion_pieza[1][1] != 0 and posicion_pieza[2][1] != 0 and posicion_pieza[3][1] != 0 and (tablero[posicion_pieza[0][0]][posicion_pieza[0][1]-1] == 0 or tablero[posicion_pieza[0][0]][posicion_pieza[0][1]-1] == 8) and (tablero[posicion_pieza[1][0]][posicion_pieza[1][1]-1] == 0 or tablero[posicion_pieza[1][0]][posicion_pieza[1][1]-1] == 8) and (tablero[posicion_pieza[2][0]][posicion_pieza[2][1]-1] == 0 or tablero[posicion_pieza[2][0]][posicion_pieza[2][1]-1] == 8) and (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 8):
             for i in range(4):
@@ -89,6 +95,7 @@ def mover(lado, posicion_pieza, tablero, pieza, count):
             for i in range(4):
                 posicion_pieza[i][1] -= 1
                 tablero[posicion_pieza[i][0]][posicion_pieza[i][1]] = 8
+            time.sleep(speed)
     
     elif lado == "derecha": 
         if posicion_pieza[0][1] != len(tablero[0])-1 and posicion_pieza[1][1] != len(tablero[0])-1 and posicion_pieza[2][1] != len(tablero[0])-1 and posicion_pieza[3][1] != len(tablero[0])-1 and (tablero[posicion_pieza[0][0]][posicion_pieza[0][1]+1] == 0 or tablero[posicion_pieza[0][0]][posicion_pieza[0][1]+1] == 8) and (tablero[posicion_pieza[1][0]][posicion_pieza[1][1]+1] == 0 or tablero[posicion_pieza[1][0]][posicion_pieza[1][1]+1] == 8) and (tablero[posicion_pieza[2][0]][posicion_pieza[2][1]+1] == 0 or tablero[posicion_pieza[2][0]][posicion_pieza[2][1]+1] == 8) and (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]+1] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]+1] == 8):
@@ -97,6 +104,7 @@ def mover(lado, posicion_pieza, tablero, pieza, count):
             for i in range(4):
                 posicion_pieza[i][1] += 1
                 tablero[posicion_pieza[i][0]][posicion_pieza[i][1]] = 8
+            time.sleep(speed)
     
     elif lado == "abajo":
         if posicion_pieza[0][0] != len(tablero)-1 and posicion_pieza[1][0] != len(tablero)-1 and posicion_pieza[2][0] != len(tablero)-1 and posicion_pieza[3][0] != len(tablero)-1 and (tablero[posicion_pieza[0][0]+1][posicion_pieza[0][1]] == 0 or tablero[posicion_pieza[0][0]+1][posicion_pieza[0][1]] == 8) and (tablero[posicion_pieza[1][0]+1][posicion_pieza[1][1]] == 0 or tablero[posicion_pieza[1][0]+1][posicion_pieza[1][1]] == 8) and (tablero[posicion_pieza[2][0]+1][posicion_pieza[2][1]] == 0 or tablero[posicion_pieza[2][0]+1][posicion_pieza[2][1]] == 8) and (tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]] == 0 or tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]] == 8):
@@ -105,14 +113,20 @@ def mover(lado, posicion_pieza, tablero, pieza, count):
             for i in range(4):
                 posicion_pieza[i][0] += 1
                 tablero[posicion_pieza[i][0]][posicion_pieza[i][1]] = 8
+            time.sleep(speed)
         else:
             for i in range(4):
                 tablero[posicion_pieza[i][0]][posicion_pieza[i][1]] = pieza
-            posicion_pieza, pieza = nueva_pieza(posicion_pieza, tablero)
+            posicion_pieza, pieza, rotacion, reward = nueva_pieza(posicion_pieza, tablero, rotacion, reward)
             count += 1
                     
     elif lado == "rotar":
+        rotacion += 1
+        if rotacion > 4:
+            rotacion = 0
+            
         pass
+        time.sleep(speed)
     
     return posicion_pieza, pieza, count
 
@@ -126,7 +140,7 @@ def destruirLinea(tablero):
                 tablero[0] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             break
 
-def nueva_pieza(posicion_pieza, tablero):
+def nueva_pieza(posicion_pieza, tablero, rotacion, reward):
     destruirLinea(tablero) #para checkear si la vez anterior que se ha puesto una pieza, se ha rellenado alguna linea, y si eso la borra
     pieza = random.randint(1,7) # crea una nueva pieza
     if pieza == 1:
@@ -144,12 +158,16 @@ def nueva_pieza(posicion_pieza, tablero):
     elif pieza == 7:
         posicion_pieza = [[1,0], [0,1], [1,1], [2,1]]
         
+    rotacion = 0
+    
+    reward += 1
+    
     for i in range(4):
         tablero[posicion_pieza[i][0]][posicion_pieza[i][1]] = 8
-    return posicion_pieza, pieza
+    return posicion_pieza, pieza, rotacion, reward
 
 screen.fill((0, 0, 0))
-posicion_pieza, pieza = nueva_pieza(posicion_pieza, tablero)
+posicion_pieza, pieza, rotacion, reward = nueva_pieza(posicion_pieza, tablero, rotacion, reward)
 while True:
     print(posicion_pieza)
 
@@ -159,22 +177,26 @@ while True:
     draw_board(tablero)
     pygame.display.flip()
     
-    inpt = input()
+    #inpt = input()
+    inpt = random.choice(["Abajo", "Izquierda", "Derecha", "Rotar"])
+    
     if inpt == "Abajo":
-        posicion_pieza, pieza, count = mover("abajo", posicion_pieza, tablero, pieza, count)
+        posicion_pieza, pieza, count = mover("abajo", posicion_pieza, tablero, pieza, count, rotacion)
     elif inpt == "Derecha":
-        posicion_pieza, pieza, count = mover("derecha", posicion_pieza, tablero, pieza, count)
+        posicion_pieza, pieza, count = mover("derecha", posicion_pieza, tablero, pieza, count, rotacion)
     elif inpt == "Izquierda":
-        posicion_pieza, pieza, count = mover("izquierda", posicion_pieza, tablero, pieza, count)
+        posicion_pieza, pieza, count = mover("izquierda", posicion_pieza, tablero, pieza, count, rotacion)
     elif inpt == "Rotar":
-        posicion_pieza, pieza, count = mover("rotar", posicion_pieza, tablero, pieza, count)
+        posicion_pieza, pieza, count = mover("rotar", posicion_pieza, tablero, pieza, count, rotacion)
     
     for i in range(2):
         for a in tablero[i]:
             if a != 0 and a != 8:
+                reward -= 50
                 print("Game Over!")
-                print("Score:", count)
-                count = 0
+                print("Game:", game, "Score:", count, "Rewards:", reward)
+                game += 1
+                count, reward = 0, 0
                 tablero = copy.deepcopy(tablero_base)
-                nueva_pieza(posicion_pieza, tablero)
+                nueva_pieza(posicion_pieza, tablero, rotacion, reward)
                 break
