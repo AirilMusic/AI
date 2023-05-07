@@ -2,6 +2,7 @@ import pygame # para la representacion visual del juego para humanos, para ver l
 import random
 import time
 import copy
+import gym # para el reinforcement learning
 
 reward = 0
 alfa = 0.25 # valor de aprendizaje/modificacion en machine learning
