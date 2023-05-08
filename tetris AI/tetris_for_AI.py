@@ -173,7 +173,17 @@ def mover(lado, posicion_pieza, tablero, pieza, count, rotacion, reward, fliped)
                         rotated = True
             
             elif pieza == 2:
-                pass
+                if rotacion == 0:
+                    pass
+                
+                elif rotacion == 1:
+                    pass
+                
+                elif rotacion == 2:
+                    pass
+                
+                else:
+                    pass
             
             elif pieza == 3: # en unas baja demas y en otras sube demas, quiero pegarme un tiro
                 if rotacion == 0:
