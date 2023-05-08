@@ -21,14 +21,15 @@ PURPLE = (128, 0, 128)               # 7
 SELECT = (255, 255, 255)             # 8 = pieza controlada
  
 pygame.init()
-screen = pygame.display.set_mode((200, 540))
+screen = pygame.display.set_mode((200, 600)) # para solo el juego es y = 540
+font = pygame.font.Font(None, 25)
 
 speed = 0.00001
 
 def draw_cell(x, y, color):
     pygame.draw.rect(screen, color, (x * 20, y * 20, 20, 20))
 
-def draw_board(board):
+def draw_board(board, game, count):
     for y, row in enumerate(board):
         for x, cell in enumerate(row):
             if cell == 0:
@@ -49,6 +50,18 @@ def draw_board(board):
                 draw_cell(x, y, PURPLE)
             elif cell == 8:
                 draw_cell(x, y, SELECT)
+    font = pygame.font.Font(None, 35)
+    game_text = font.render("Game: " + str(game), True, (255, 255, 255))
+    score_text = font.render("Score: " + str(count), True, (255, 255, 255))
+    screen.blit(game_text, (10, 550))
+    screen.blit(score_text, (10, 570))
+               
+def delet_last_text(game, count):
+    font = pygame.font.Font(None, 35)
+    last_game_text = font.render("Game: " + str(game), True, (0, 0, 0))
+    last_score_text = font.render("Score: " + str(count-1), True, (0, 0, 0))
+    screen.blit(last_game_text, (10, 550))
+    screen.blit(last_score_text, (10, 570))
 
 # Piezas:
 #     1       2      3     4      5      6      7
@@ -173,12 +186,11 @@ def nueva_pieza(posicion_pieza, tablero, rotacion, reward):
 screen.fill((0, 0, 0))
 posicion_pieza, pieza, rotacion, reward = nueva_pieza(posicion_pieza, tablero, rotacion, reward)
 while True:
-    print(posicion_pieza)
-
-    for i in range(len(tablero)):
-        print(tablero[i])
+    #print(posicion_pieza)
+    #for i in range(len(tablero)):
+    #    print(tablero[i])
     
-    draw_board(tablero)
+    draw_board(tablero, game, count)
     pygame.display.flip()
     
     #inpt = input()
@@ -193,6 +205,8 @@ while True:
     elif inpt == "Rotar":
         posicion_pieza, pieza, count = mover("rotar", posicion_pieza, tablero, pieza, count, rotacion, reward)
     
+    print("countn",count)
+    delet_last_text(game, count)
     for i in range(2):
         for a in tablero[i]:
             if a != 0 and a != 8:
