@@ -154,7 +154,6 @@ def mover(lado, posicion_pieza, tablero, pieza, count, rotacion, reward, fliped)
     elif lado == "rotar":
         try:
             rotated = False
-            
             if pieza == 1:
                 if rotacion == 0 or rotacion == 2:
                     if (posicion_pieza[3][1]+3) < ltx and (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]+1] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]+1] == 8) and (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]+2] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]+2] == 8) and (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]+3] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]+3] == 8):
@@ -174,10 +173,20 @@ def mover(lado, posicion_pieza, tablero, pieza, count, rotacion, reward, fliped)
             
             elif pieza == 2:
                 if rotacion == 0:
-                    pass
+                    if (posicion_pieza[3][1]+1) < ltx and (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 8) and (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]+1] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]+1] == 8) and (tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]+1] == 0 or tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]+1] == 8):
+                        clean(tablero, posicion_pieza)
+                        posicion_pieza[0] = [posicion_pieza[3][0], posicion_pieza[3][1]-1]
+                        posicion_pieza[1] = [posicion_pieza[3][0], posicion_pieza[3][1]+1]
+                        posicion_pieza[2] = [posicion_pieza[3][0]-1, posicion_pieza[3][1]+1]
+                        rotated = True
                 
                 elif rotacion == 1:
-                    pass
+                    if (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 8) and (tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]-1] == 0 or tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]-1] == 8) and (tablero[posicion_pieza[3][0]-2][posicion_pieza[3][1]-1] == 0 or tablero[posicion_pieza[3][0]-2][posicion_pieza[3][1]-1] == 8):
+                        clean(tablero, posicion_pieza)
+                        posicion_pieza[0] = [posicion_pieza[3][0], posicion_pieza[3][1]-1]
+                        posicion_pieza[1] = [posicion_pieza[3][0]-1, posicion_pieza[3][1]-1]
+                        posicion_pieza[2] = [posicion_pieza[3][0]-2, posicion_pieza[3][1]-1]
+                        rotated = True
                 
                 elif rotacion == 2:
                     pass
@@ -261,6 +270,7 @@ def destruirLinea(tablero, reward):
 def nueva_pieza(posicion_pieza, tablero, rotacion, reward, fliped):
     reward = destruirLinea(tablero, reward) #para checkear si la vez anterior que se ha puesto una pieza, se ha rellenado alguna linea, y si eso la borra
     pieza = random.randint(1,7) # crea una nueva pieza
+    #pieza = 2 # para pruebas
     if pieza == 1:
         posicion_pieza = [[0,0], [1,0], [2,0], [3,0]]
     elif pieza == 2:
@@ -287,15 +297,10 @@ def nueva_pieza(posicion_pieza, tablero, rotacion, reward, fliped):
 
 screen.fill((0, 0, 0))
 posicion_pieza, pieza, rotacion, reward, fliped = nueva_pieza(posicion_pieza, tablero, rotacion, reward, fliped)
+draw_board(tablero, game, count)
+pygame.display.flip()
 reward = 0
 while True:
-    #print(posicion_pieza)
-    #for i in range(lty):
-    #    print(tablero[i])
-    
-    draw_board(tablero, game, count)
-    pygame.display.flip()
-    
     #inpt = input()
     inpt = random.choice(acciones) # esto hay que cambiarlo al output de la IA
     
@@ -308,6 +313,9 @@ while True:
     elif inpt == "Rotar":
         posicion_pieza, pieza, count, rotacion, reward, fliped = mover("rotar", posicion_pieza, tablero, pieza, count, rotacion, reward, fliped)
     
+    draw_board(tablero, game, count)
+    pygame.display.flip()
+    
     delet_last_text(game, count)
     for i in range(2):
         for a in tablero[i]:
@@ -319,4 +327,6 @@ while True:
                 count, reward = 0, 0
                 tablero = copy.deepcopy(tablero_base)
                 nueva_pieza(posicion_pieza, tablero, rotacion, reward, fliped)
+                draw_board(tablero, game, count)
+                pygame.display.flip()
                 break
