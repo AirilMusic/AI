@@ -179,7 +179,7 @@ def mover(lado, posicion_pieza, tablero, pieza, count, rotacion, reward, fliped)
             
             elif pieza == 2:
                 if rotacion == 0:
-                    if (posicion_pieza[3][1]+1) < ltx and (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 8) and (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]+1] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]+1] == 8) and (tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]+1] == 0 or tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]+1] == 8):
+                    if (posicion_pieza[3][1]+2) < ltx and (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 8) and (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]+1] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]+1] == 8) and (tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]+1] == 0 or tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]+1] == 8):
                         clean(tablero, posicion_pieza)
                         posicion_pieza[0] = [posicion_pieza[3][0], posicion_pieza[3][1]-1]
                         posicion_pieza[1] = [posicion_pieza[3][0], posicion_pieza[3][1]+1]
@@ -270,13 +270,53 @@ def mover(lado, posicion_pieza, tablero, pieza, count, rotacion, reward, fliped)
             
             elif pieza == 6:
                 if rotacion == 0 or rotacion == 2:
-                    pass
+                    if (posicion_pieza[3][1]+1) and (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]+1] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]+1] == 8) and (tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]] == 0 or tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]] == 8) and (tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]-1] == 0 or tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]-1] == 8):
+                        clean(tablero, posicion_pieza)
+                        posicion_pieza[0] = [posicion_pieza[3][0], posicion_pieza[3][1]+1]
+                        posicion_pieza[1] = [posicion_pieza[3][0]+1, posicion_pieza[3][1]]
+                        posicion_pieza[2] = [posicion_pieza[3][0]+1, posicion_pieza[3][1]-1]
+                        rotated = True
                 
                 else:
-                    pass
+                    if (tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]] == 0 or tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]] == 8) and (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 8) and (tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]-1] == 0 or tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]-1] == 8):
+                        clean(tablero, posicion_pieza)
+                        posicion_pieza[0] = [posicion_pieza[3][0]+1, posicion_pieza[3][1]]
+                        posicion_pieza[1] = [posicion_pieza[3][0], posicion_pieza[3][1]-1]
+                        posicion_pieza[2] = [posicion_pieza[3][0]-1, posicion_pieza[3][1]-1]
+                        rotated = True
             
             elif pieza == 7:
-                pass
+                if rotacion == 0:
+                    if (posicion_pieza[3][1]+1) < ltx and (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 8) and (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-2] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-2] == 8) and (tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]-1] == 0 or tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]-1] == 8):
+                        clean(tablero, posicion_pieza)
+                        posicion_pieza[0] = [posicion_pieza[3][0], posicion_pieza[3][1]-1]
+                        posicion_pieza[1] = [posicion_pieza[3][0], posicion_pieza[3][1]-2]
+                        posicion_pieza[2] = [posicion_pieza[3][0]-1, posicion_pieza[3][1]-1]
+                        rotated = True
+                
+                elif rotacion == 1:
+                    if (tablero[posicion_pieza[1][0]-1][posicion_pieza[1][1]] == 0 or tablero[posicion_pieza[1][0]-1][posicion_pieza[1][1]] == 8) and (tablero[posicion_pieza[1][0]-2][posicion_pieza[1][1]] == 0 or tablero[posicion_pieza[1][0]-2][posicion_pieza[1][1]] == 8) and (tablero[posicion_pieza[1][0]-1][posicion_pieza[1][1]+1] == 0 or tablero[posicion_pieza[1][0]-1][posicion_pieza[1][1]+1] == 8):
+                        clean(tablero, posicion_pieza)
+                        posicion_pieza[0] = [posicion_pieza[1][0]-1, posicion_pieza[1][1]]
+                        posicion_pieza[2] = [posicion_pieza[1][0]-2, posicion_pieza[1][1]]
+                        posicion_pieza[3] = [posicion_pieza[1][0]-1, posicion_pieza[1][1]-1]
+                        rotated = True
+                
+                elif rotacion == 2:
+                    if (posicion_pieza[0][1]+2) < ltx and (tablero[posicion_pieza[0][0]][posicion_pieza[0][1]+1] == 0 or tablero[posicion_pieza[0][0]][posicion_pieza[0][1]+1] == 8) and (tablero[posicion_pieza[0][0]][posicion_pieza[0][1]+2] == 0 or tablero[posicion_pieza[0][0]][posicion_pieza[0][1]+2] == 8) and (tablero[posicion_pieza[0][0]+1][posicion_pieza[0][1]+1] == 0 or tablero[posicion_pieza[0][0]+1][posicion_pieza[0][1]+1] == 8):
+                        clean(tablero, posicion_pieza)
+                        posicion_pieza[1] = [posicion_pieza[0][0], posicion_pieza[0][1]+1]
+                        posicion_pieza[2] = [posicion_pieza[0][0], posicion_pieza[0][1]+2]
+                        posicion_pieza[3] = [posicion_pieza[0][0]+1, posicion_pieza[0][1]+1]
+                        rotated = True
+                
+                else:
+                    if (tablero[posicion_pieza[2][0]-1][posicion_pieza[2][1]] == 0 or tablero[posicion_pieza[2][0]-1][posicion_pieza[2][1]] == 8) and (tablero[posicion_pieza[2][0]+1][posicion_pieza[2][1]] == 0 or tablero[posicion_pieza[2][0]+1][posicion_pieza[2][1]] == 8) and (tablero[posicion_pieza[2][0]][posicion_pieza[2][1]-1] == 0 or tablero[posicion_pieza[2][0]][posicion_pieza[2][1]-1] == 8):
+                        clean(tablero, posicion_pieza)
+                        posicion_pieza[0] = [posicion_pieza[2][0]-1, posicion_pieza[2][1]]
+                        posicion_pieza[1] = [posicion_pieza[2][0]+1, posicion_pieza[2][1]]
+                        posicion_pieza[3] = [posicion_pieza[2][0], posicion_pieza[2][1]-1]
+                        rotated = True
             
             if rotated == True:
                 rotacion += 1
