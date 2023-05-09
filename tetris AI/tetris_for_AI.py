@@ -6,6 +6,8 @@ import gym # para el reinforcement learning
 from gym import spaces
 import numpy as np
 
+# hay comentarios que los he ido poniendo para acordarme de cosas... y no lo he terminado quitando porque me han hecho gracia :3
+
 reward = 0
 alfa = 0.25 # valor de aprendizaje/modificacion en machine learning
 ganma = 0.8 # si es proximo a 0 busca recompensas a corto plazo, y si es cercano a 1 las busca a largo plazo
@@ -54,6 +56,10 @@ def draw_board(board, game, count):
                 draw_cell(x, y, SELECT)
                 
     font = pygame.font.Font(None, 35)
+    game_text = font.render("Game: " + str(game-1), True, (0, 0, 0))
+    score_text = font.render("Score: " + str(count-1), True, (0, 0, 0))
+    screen.blit(game_text, (10, 550))
+    screen.blit(score_text, (10, 570))
     game_text = font.render("Game: " + str(game), True, (255, 255, 255))
     score_text = font.render("Score: " + str(count), True, (255, 255, 255))
     screen.blit(game_text, (10, 550))
@@ -69,8 +75,8 @@ def delet_last_text(game, count):
 # Piezas:
 #     1       2      3     4      5      6      7
 #            
-#    ####     #       #    ##     ##    ##      #
-#             ###   ###    ##    ##      ##    ###
+#    ####      #    #      ##     ##    ##      #
+#            ###    ###    ##    ##      ##    ###
 
 tablero_base = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # coordenadas: tablero[y[x]]
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # SI ALGUNA PIEZA TOCA ESTA LINEA DESPUES DE HABERSE COLOCADO = GAME OVER, estas dos lineas son como un buffer antes de hacer el primer movimiento
@@ -189,10 +195,20 @@ def mover(lado, posicion_pieza, tablero, pieza, count, rotacion, reward, fliped)
                         rotated = True
                 
                 elif rotacion == 2:
-                    pass
+                    if (posicion_pieza[0][1]+2) < ltx and (tablero[posicion_pieza[0][0]-1][posicion_pieza[0][1]] == 0 or tablero[posicion_pieza[0][0]-1][posicion_pieza[0][1]] == 8) and (tablero[posicion_pieza[0][0]-1][posicion_pieza[0][1]+1] == 0 or tablero[posicion_pieza[0][0]-1][posicion_pieza[0][1]+1] == 8) and (tablero[posicion_pieza[0][0]-1][posicion_pieza[0][1]+2] == 0 or tablero[posicion_pieza[0][0]-1][posicion_pieza[0][1]+2] == 8):
+                        clean(tablero, posicion_pieza)
+                        posicion_pieza[1] = [posicion_pieza[0][0]-1, posicion_pieza[0][1]]
+                        posicion_pieza[2] = [posicion_pieza[0][0]-1, posicion_pieza[0][1]+1]
+                        posicion_pieza[3] = [posicion_pieza[0][0]-1, posicion_pieza[0][1]+2]
+                        rotated = True
                 
                 else:
-                    pass
+                    if (tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]] == 0 or tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]] == 8) and (tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]] == 0 or tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]] == 8) and (tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]-1] == 0 or tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]-1] == 8):
+                        clean(tablero, posicion_pieza)
+                        posicion_pieza[0] = [posicion_pieza[3][0]-1, posicion_pieza[3][1]]
+                        posicion_pieza[1] = [posicion_pieza[3][0]+1, posicion_pieza[3][1]]
+                        posicion_pieza[2] = [posicion_pieza[3][0]+1, posicion_pieza[3][1]-1]
+                        rotated = True
             
             elif pieza == 3: # en unas baja demas y en otras sube demas, quiero pegarme un tiro
                 if rotacion == 0:
@@ -236,10 +252,28 @@ def mover(lado, posicion_pieza, tablero, pieza, count, rotacion, reward, fliped)
                         rotated = True
             
             elif pieza == 5:
-                pass
+                if rotacion == 0 or rotacion == 2:
+                    if (posicion_pieza[1][1]+2) < ltx and (tablero[posicion_pieza[1][0]][posicion_pieza[1][1]+1] == 0 or tablero[posicion_pieza[1][0]][posicion_pieza[1][1]+1] == 8) and (tablero[posicion_pieza[1][0]+1][posicion_pieza[1][1]+1] == 0 or tablero[posicion_pieza[1][0]+1][posicion_pieza[1][1]+1] == 8) and (tablero[posicion_pieza[1][0]+1][posicion_pieza[1][1]+2] == 0 or tablero[posicion_pieza[1][0]+1][posicion_pieza[1][1]+2] == 8):
+                        clean(tablero, posicion_pieza)
+                        posicion_pieza[0] = [posicion_pieza[1][0], posicion_pieza[1][1]+1]
+                        posicion_pieza[2] = [posicion_pieza[1][0]+1, posicion_pieza[1][1]+1]
+                        posicion_pieza[3] = [posicion_pieza[1][0]+1, posicion_pieza[1][1]+2]
+                        rotated = True
+                    
+                else: # apaño pendiente XD  <-- no funca <-- creo que ya funca
+                    if (tablero[posicion_pieza[1][0]+1][posicion_pieza[1][1]] == 0 or tablero[posicion_pieza[1][0]+1][posicion_pieza[1][1]] == 8) and (tablero[posicion_pieza[1][0]][posicion_pieza[1][1]+1] == 0 or tablero[posicion_pieza[1][0]][posicion_pieza[1][1]+1] == 8) and (tablero[posicion_pieza[1][0]-1][posicion_pieza[1][1]+1] == 0 or tablero[posicion_pieza[1][0]-1][posicion_pieza[1][1]+1] == 8):
+                        clean(tablero, posicion_pieza)
+                        posicion_pieza[0] = [posicion_pieza[1][0]+1, posicion_pieza[1][1]]
+                        posicion_pieza[2] = [posicion_pieza[1][0], posicion_pieza[1][1]+1]
+                        posicion_pieza[3] = [posicion_pieza[1][0]-1, posicion_pieza[1][1]+1]
+                        rotated = True
             
             elif pieza == 6:
-                pass
+                if rotacion == 0 or rotacion == 2:
+                    pass
+                
+                else:
+                    pass
             
             elif pieza == 7:
                 pass
@@ -270,7 +304,7 @@ def destruirLinea(tablero, reward):
 def nueva_pieza(posicion_pieza, tablero, rotacion, reward, fliped):
     reward = destruirLinea(tablero, reward) #para checkear si la vez anterior que se ha puesto una pieza, se ha rellenado alguna linea, y si eso la borra
     pieza = random.randint(1,7) # crea una nueva pieza
-    #pieza = 2 # para pruebas
+    #pieza = 1 # para pruebas 
     if pieza == 1:
         posicion_pieza = [[0,0], [1,0], [2,0], [3,0]]
     elif pieza == 2:
@@ -329,4 +363,5 @@ while True:
                 nueva_pieza(posicion_pieza, tablero, rotacion, reward, fliped)
                 draw_board(tablero, game, count)
                 pygame.display.flip()
+                delet_last_text(game, count)
                 break
