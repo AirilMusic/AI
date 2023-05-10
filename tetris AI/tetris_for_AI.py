@@ -57,7 +57,7 @@ pygame.init()
 screen = pygame.display.set_mode((200, 600)) # para solo el juego es y = 540
 font = pygame.font.Font(None, 25)
 
-speed = 0.00001
+speed =  0.00001
 
 def draw_cell(x, y, color):
     pygame.draw.rect(screen, color, (x * 20, y * 20, 20, 20))
@@ -316,7 +316,7 @@ def mover(lado, posicion_pieza, tablero, pieza, count, rotacion, reward, fliped)
             
             elif pieza == 7:
                 if rotacion == 0:
-                    if (posicion_pieza[3][1]+1) < ltx and (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 8) and (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-2] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-2] == 8) and (tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]-1] == 0 or tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]-1] == 8):
+                    if (posicion_pieza[3][1]+1) < ltx and (posicion_pieza[3][1]-2) > 0 and (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-1] == 8) and (tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-2] == 0 or tablero[posicion_pieza[3][0]][posicion_pieza[3][1]-2] == 8) and (tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]-1] == 0 or tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]-1] == 8):
                         clean(tablero, posicion_pieza)
                         posicion_pieza[0] = [posicion_pieza[3][0], posicion_pieza[3][1]-1]
                         posicion_pieza[1] = [posicion_pieza[3][0], posicion_pieza[3][1]-2]
