@@ -2,16 +2,45 @@ import pygame # para la representacion visual del juego para humanos, para ver l
 import random
 import time
 import copy
-import gym # para el reinforcement learning
-from gym import spaces
+
+import pyqlearning # para la IA
+from pyqlearning.annealingmodel.costfunctionable.greedy_q_learning_cost import GreedyQLearningCost
+from pyqlearning.annealingmodel.simulated_annealing import SimulatedAnnealing
 import numpy as np
 
 # hay comentarios que los he ido poniendo para acordarme de cosas... y no lo he terminado quitando porque me han hecho gracia :3
 
-reward = 0
-alfa = 0.25 # valor de aprendizaje/modificacion en machine learning
-ganma = 0.8 # si es proximo a 0 busca recompensas a corto plazo, y si es cercano a 1 las busca a largo plazo
+################################                AI                ################################
+def training(tablero, reward):
+    matrix = []
+    for i in tablero:
+        line = []
+        for a in i:
+            if a == 0:
+                line.append(a)
+            elif a == 8:
+                line.append(1)
+            else:
+                line.append(2)
+        matrix.append(line)
+        
+    num_states = 27*10
+    num_actions = 4
 
+    greedy_rate_arr = np.random.normal(loc=0.5, scale=0.1, size=100) # epsilon: factor de exploracion: probabilidad de que el agente elija una accion random
+    alpha_value_arr = np.random.normal(loc=0.5, scale=0.1, size=100) # alpha: valor de aprendizaje/modificacion en machine learning
+    gamma_value_arr = np.random.normal(loc=0.5, scale=0.1, size=100) # gamma: si es proximo a 0 busca recompensas a corto plazo, y si es cercano a 1 las busca a largo plazo
+    limit_arr = np.random.normal(loc=10, scale=1, size=100)
+
+    var_arr = np.c_[greedy_rate_arr, alpha_value_arr, gamma_value_arr, limit_arr]
+
+    cost_function = GreedyQLearningCost(num_states, num_actions)
+    annealing_model = SimulatedAnnealing(cost_function)
+
+    annealing_model.learn(var_arr, reward, matrix.flatten(), num_states, num_actions)
+################################                AI                ################################
+
+reward = 0
 game = 1
  
 BLACK = (0, 0, 0)                    # 0
@@ -389,12 +418,13 @@ while True:
     
     draw_board(tablero, game, count)
     pygame.display.flip()
-    
     delet_last_text(game, count)
+    rewarded = False
     for i in range(2):
         for a in tablero[i]:
             if a != 0 and a != 8:
                 reward -= 50
+                #training(tablero, reward)
                 print("Game Over!")
                 print("Game:", game, "Score:", count, "Rewards:", reward)
                 game += 1
@@ -404,4 +434,8 @@ while True:
                 draw_board(tablero, game, count)
                 pygame.display.flip()
                 delet_last_text(game, count)
+                rewarded = True
                 break
+    if rewarded == False:
+        #training(tablero, reward)
+        pass
