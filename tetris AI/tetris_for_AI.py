@@ -3,15 +3,14 @@ import random
 import time
 import copy
 
-import pyqlearning # para la IA
-from pyqlearning.annealingmodel.costfunctionable.greedy_q_learning_cost import GreedyQLearningCost
-from pyqlearning.annealingmodel.simulated_annealing import SimulatedAnnealing
+import tensorflow as tf
+from tensorflow import keras
 import numpy as np
 
 # hay comentarios que los he ido poniendo para acordarme de cosas... y no lo he terminado quitando porque me han hecho gracia :3
 
 ################################                AI                ################################
-def training(tablero, reward):
+def mtx(tablero):
     matrix = []
     for i in tablero:
         line = []
@@ -22,22 +21,53 @@ def training(tablero, reward):
                 line.append(1)
             else:
                 line.append(2)
+        line = np.array(line)
         matrix.append(line)
+    return matrix
+
+def create_model():
+    model = keras.Sequential([
+        keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(27, 10, 1)),
+        keras.layers.MaxPooling2D((2, 2)),
+        keras.layers.Conv2D(64, (3, 3), activation='relu'),
+        keras.layers.MaxPooling2D((2, 2)),
+        keras.layers.Flatten(),
+        keras.layers.Dense(64, activation='relu'),
+        keras.layers.Dense(4, activation='linear')
+    ])
+    model.compile(optimizer='adam', loss='mse')
+    return model
+
+model = create_model()
+
+def q_learning_update(model, state, action, reward, next_state, discount_factor):
+    q_values = model.predict(state[np.newaxis])
+    next_q_values = model.predict(next_state[np.newaxis])
+    q_values[0][action] = reward + discount_factor * np.max(next_q_values)
+    model.train_on_batch(state[np.newaxis], q_values[np.newaxis])
+    return model
+    
+    
+def train(tablero, reward, model):
+    matrix = mtx(tablero)
+    state = np.array(matrix)
+    action_map = {'Abajo': 0, 'Derecha': 1, 'Izquierda': 2, 'Rotar': 3}
+    action = action_map[np.random.choice(['Abajo', 'Derecha', 'Izquierda', 'Rotar'])]
+    next_state = np.array(tablero)
+    discount_factor = 0.99
+
+    model = q_learning_update(model, state, action, reward, next_state, discount_factor)
+    
+    if action == 0:
+        action = "Abajo"
+    elif action == 1:
+        action = "Derecha"
+    elif action == 2:
+        action = "Izquierda"
+    else:
+        action = "Rotar"
         
-    num_states = 27*10
-    num_actions = 4
-
-    greedy_rate_arr = np.random.normal(loc=0.5, scale=0.1, size=100) # epsilon: factor de exploracion: probabilidad de que el agente elija una accion random
-    alpha_value_arr = np.random.normal(loc=0.5, scale=0.1, size=100) # alpha: valor de aprendizaje/modificacion en machine learning
-    gamma_value_arr = np.random.normal(loc=0.5, scale=0.1, size=100) # gamma: si es proximo a 0 busca recompensas a corto plazo, y si es cercano a 1 las busca a largo plazo
-    limit_arr = np.random.normal(loc=10, scale=1, size=100)
-
-    var_arr = np.c_[greedy_rate_arr, alpha_value_arr, gamma_value_arr, limit_arr]
-
-    cost_function = GreedyQLearningCost(num_states, num_actions)
-    annealing_model = SimulatedAnnealing(cost_function)
-
-    annealing_model.learn(var_arr, reward, matrix.flatten(), num_states, num_actions)
+    return action
 ################################                AI                ################################
 
 reward = 0
@@ -403,9 +433,11 @@ posicion_pieza, pieza, rotacion, reward, fliped = nueva_pieza(posicion_pieza, ta
 draw_board(tablero, game, count)
 pygame.display.flip()
 reward = 0
+action = train(tablero, reward, model)
 while True:
     #inpt = input()
-    inpt = random.choice(acciones) # esto hay que cambiarlo al output de la IA
+    #inpt = random.choice(acciones) # esto hay que cambiarlo al output de la IA
+    inpt = action
     
     if inpt == "Abajo":
         posicion_pieza, pieza, count, rotacion, reward, fliped = mover("abajo", posicion_pieza, tablero, pieza, count, rotacion, reward, fliped)
@@ -424,7 +456,7 @@ while True:
         for a in tablero[i]:
             if a != 0 and a != 8:
                 reward -= 50
-                #training(tablero, reward)
+                action = train(tablero, reward, model)
                 print("Game Over!")
                 print("Game:", game, "Score:", count, "Rewards:", reward)
                 game += 1
@@ -437,5 +469,4 @@ while True:
                 rewarded = True
                 break
     if rewarded == False:
-        #training(tablero, reward)
-        pass
+        action = train(tablero, reward, model)
