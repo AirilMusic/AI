@@ -254,19 +254,19 @@ def mover(lado, posicion_pieza, tablero, pieza, count, rotacion, reward, fliped)
                         rotated = True
                 
                 elif rotacion == 2:
-                    if (posicion_pieza[0][1]+2) < ltx and (tablero[posicion_pieza[0][0]-1][posicion_pieza[0][1]] == 0 or tablero[posicion_pieza[0][0]-1][posicion_pieza[0][1]] == 8) and (tablero[posicion_pieza[0][0]-1][posicion_pieza[0][1]+1] == 0 or tablero[posicion_pieza[0][0]-1][posicion_pieza[0][1]+1] == 8) and (tablero[posicion_pieza[0][0]-1][posicion_pieza[0][1]+2] == 0 or tablero[posicion_pieza[0][0]-1][posicion_pieza[0][1]+2] == 8):
+                    if (posicion_pieza[0][1]-2) > 0 and (tablero[posicion_pieza[0][0]][posicion_pieza[0][1]-1] == 0 or tablero[posicion_pieza[0][0]][posicion_pieza[0][1]-1] == 8) and (tablero[posicion_pieza[0][0]][posicion_pieza[0][1]-2] == 0 or tablero[posicion_pieza[0][0]][posicion_pieza[0][1]-2] == 8) and (tablero[posicion_pieza[0][0]-1][posicion_pieza[0][1]] == 0 or tablero[posicion_pieza[0][0]-1][posicion_pieza[0][1]] == 8):
                         clean(tablero, posicion_pieza)
-                        posicion_pieza[1] = [posicion_pieza[0][0]-1, posicion_pieza[0][1]]
-                        posicion_pieza[2] = [posicion_pieza[0][0]-1, posicion_pieza[0][1]+1]
-                        posicion_pieza[3] = [posicion_pieza[0][0]-1, posicion_pieza[0][1]+2]
+                        posicion_pieza[1] = [posicion_pieza[0][0], posicion_pieza[0][1]-1]
+                        posicion_pieza[2] = [posicion_pieza[0][0], posicion_pieza[0][1]-2]
+                        posicion_pieza[3] = [posicion_pieza[0][0]-1, posicion_pieza[0][1]]
                         rotated = True
                 
                 else:
-                    if (tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]] == 0 or tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]] == 8) and (tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]] == 0 or tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]] == 8) and (tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]-1] == 0 or tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]-1] == 8):
+                    if (tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]-1] == 0 or tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]-1] == 8) and (tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]] == 0 or tablero[posicion_pieza[3][0]-1][posicion_pieza[3][1]] == 8) and (tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]] == 0 or tablero[posicion_pieza[3][0]+1][posicion_pieza[3][1]] == 8):
                         clean(tablero, posicion_pieza)
-                        posicion_pieza[0] = [posicion_pieza[3][0]-1, posicion_pieza[3][1]]
-                        posicion_pieza[1] = [posicion_pieza[3][0]+1, posicion_pieza[3][1]]
-                        posicion_pieza[2] = [posicion_pieza[3][0]+1, posicion_pieza[3][1]-1]
+                        posicion_pieza[0] = [posicion_pieza[3][0]-1, posicion_pieza[3][1]-1]
+                        posicion_pieza[1] = [posicion_pieza[3][0]-1, posicion_pieza[3][1]]
+                        posicion_pieza[2] = [posicion_pieza[3][0]+1, posicion_pieza[3][1]]
                         rotated = True
             
             elif pieza == 3: # en unas baja demas y en otras sube demas, quiero pegarme un tiro
