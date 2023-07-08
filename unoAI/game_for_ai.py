@@ -138,6 +138,11 @@ for i in range(players):
 used_cards = []
 tota_cards = 112
 
+plus2round = 0
+plus4round = 0
+
+colour = 1 # 1:red, 2:green , 3:blue , 4:yellow
+
 while True:
     if players_list[0].cards != []:
         pass
