@@ -1,7 +1,7 @@
 import random
 import pygame
 
-cards = {
+cards = (
     1,   # 0 RED
     2,   # 0 RED
     3,   # 1 RED
@@ -114,7 +114,7 @@ cards = {
     110, # COLOR CHANGE +4
     111, # COLOR CHANGE +4
     112  # COLOR CHANGE +4
-}
+)
 
 players_list = []
 
@@ -130,10 +130,15 @@ unsafled_cards = 112
 
 for i in range(players):
     for a in range(7):
-        card = random.randint(1, unsafled_cards)
+        card = int(random.randint(1, unsafled_cards))
         players[i].append(random.choice(cards[card]))
         unsafled_cards -= 1
         cards.remove(cards[card])
+
+for i in range(10):
+    if len(players_list[i].cards) != 0:
+        print("\nPlayer:", players_list[i].player_id)
+        print(players_list[i].cards)
 
 used_cards = []
 tota_cards = 112
