@@ -120,7 +120,7 @@ players_list = []
 
 for i in range(10):
     class player():
-        player_id = i+1
+        player_id = i+1 # esto realmente no es necesario porque es la posicion del array + 1, pero bueno, si no lo utilizo lo quitare
         cards = []
         used_cards = []
         playing = False
@@ -153,16 +153,16 @@ plus2round = 0
 plus4round = 0
 
 def colour(card):
-    if card >= 1 and card <= 20:
+    if (card >= 1 and card <= 20) or card == 81 or card == 82 or card == 89 or card == 90 or card == 97 or card == 98:
         return 1 # RED
-    elif card > 20 and card <= 40:
+    elif (card > 20 and card <= 40) or card == 85 or card == 86 or card == 95 or card == 96 or card == 101 or card == 102:
         return 2 # YELLOW
-    elif card > 40 and card <= 60:
+    elif (card > 40 and card <= 60) or card == 87 or card == 88 or card == 93 or card == 94 or card == 103 or card == 104:
         return 3 # BLUE
-    elif card > 60 and card <= 80:
+    elif (card > 60 and card <= 80) or card == 83 or card == 84 or card == 91 or card == 92 or card == 99 or card == 100:
         return 4 # GREEN
-    
-    ########################################## FALTA TERMINAR ESTO ########################################## 
+    else:
+        return 0 # COLOR CHANGE
 
 last_card = init_card
 colour = colour(last_card)
