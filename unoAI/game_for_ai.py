@@ -165,76 +165,175 @@ def colour(card):
         return 0 # COLOR CHANGE
 
 last_card = init_card
-colour = colour(last_card)
+last_card_colour = colour(last_card)
 
 while True:
     if players_list[0].cards != [] and players_list[0].playing == True:
+        posible_cards = []
+        for i in players_list[0].cards:
+            if colour(i) == last_card_colour or colour(i) == 0:
+                posible_cards.append(i)
+                
+        if posible_cards != []:
+            pass     #################### Y AQUI ELIGE LA IA
         
         
+        
+        else:
+            print("Player 1:    PASS")
         
         if players_list[0].cards == []:
-            print("Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
+            print("Player 1:    Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
     
     if players_list[1].cards != [] and players_list[1].playing == True:
+        posible_cards = []
+        for i in players_list[1].cards:
+            if colour(i) == last_card_colour or colour(i) == 0:
+                posible_cards.append(i)
+                
+        if posible_cards != []:
+            pass     #################### Y AQUI ELIGE LA IA
         
         
+        
+        else:
+            print("Player 2:    PASS")
         
         if players_list[1].cards == []:
-            print("Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
+            print("Player 2:    Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
     
     if players_list[2].cards != [] and players_list[2].playing == True:
+        posible_cards = []
+        for i in players_list[2].cards:
+            if colour(i) == last_card_colour or colour(i) == 0:
+                posible_cards.append(i)
+                
+        if posible_cards != []:
+            pass     #################### Y AQUI ELIGE LA IA
         
         
+        
+        else:
+            print("Player 3:    PASS")
         
         if players_list[2].cards == []:
-            print("Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
+            print("Player 3:    Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
     
     if players_list[3].cards != [] and players_list[3].playing == True:
+        posible_cards = []
+        for i in players_list[3].cards:
+            if colour(i) == last_card_colour or colour(i) == 0:
+                posible_cards.append(i)
+                
+        if posible_cards != []:
+            pass     #################### Y AQUI ELIGE LA IA
         
         
+        
+        else:
+            print("Player 4:    PASS")
         
         if players_list[3].cards == []:
-            print("Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
+            print("Player 4:    Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
     
     if players_list[4].cards != [] and players_list[4].playing == True:
+        posible_cards = []
+        for i in players_list[4].cards:
+            if colour(i) == last_card_colour or colour(i) == 0:
+                posible_cards.append(i)
+                
+        if posible_cards != []:
+            pass     #################### Y AQUI ELIGE LA IA
         
         
+        
+        else:
+            print("Player 5:    PASS")
         
         if players_list[4].cards == []:
-            print("Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
+            print("Player 5:    Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
 
     if players_list[5].cards != [] and players_list[5].playing == True:
+        posible_cards = []
+        for i in players_list[5].cards:
+            if colour(i) == last_card_colour or colour(i) == 0:
+                posible_cards.append(i)
+                
+        if posible_cards != []:
+            pass     #################### Y AQUI ELIGE LA IA
         
         
+        
+        else:
+            print("Player 6:    PASS")
         
         if players_list[5].cards == []:
-            print("Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
+            print("Player 6:    Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
     
     if players_list[6].cards != [] and players_list[6].playing == True:
+        posible_cards = []
+        for i in players_list[6].cards:
+            if colour(i) == last_card_colour or colour(i) == 0:
+                posible_cards.append(i)
+                
+        if posible_cards != []:
+            pass     #################### Y AQUI ELIGE LA IA
         
         
+        
+        else:
+            print("Player 7:    PASS")
         
         if players_list[6].cards == []:
-            print("Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
+            print("Player 7:    Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
     
     if players_list[7].cards != [] and players_list[7].playing == True:
+        posible_cards = []
+        for i in players_list[7].cards:
+            if colour(i) == last_card_colour or colour(i) == 0:
+                posible_cards.append(i)
+                
+        if posible_cards != []:
+            pass     #################### Y AQUI ELIGE LA IA
         
         
+        
+        else:
+            print("Player 8:    PASS")
         
         if players_list[7].cards == []:
-            print("Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
-
+            print("Player 8:    Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
     
     if players_list[8].cards != [] and players_list[8].playing == True:
+        posible_cards = []
+        for i in players_list[8].cards:
+            if colour(i) == last_card_colour or colour(i) == 0:
+                posible_cards.append(i)
+                
+        if posible_cards != []:
+            pass     #################### Y AQUI ELIGE LA IA
         
         
+        
+        else:
+            print("Player 9:    PASS")
         
         if players_list[8].cards == []:
-            print("Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
+            print("Player 9:    Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
     
     if players_list[9].cards != [] and players_list[9].playing == True:
+        posible_cards = []
+        for i in players_list[9].cards:
+            if colour(i) == last_card_colour or colour(i) == 0:
+                posible_cards.append(i)
+                
+        if posible_cards != []:
+            pass     #################### Y AQUI ELIGE LA IA
         
         
         
-        if players_list[0].cards == []:
-            print("Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
+        else:
+            print("Player 10:    PASS")
+        
+        if players_list[9].cards == []:
+            print("Player 10:    Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
