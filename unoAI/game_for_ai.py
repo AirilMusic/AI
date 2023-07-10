@@ -1,5 +1,8 @@
 import random
 import pygame
+import tensorflow as tf
+from tensorflow import keras
+import numpy as np
 
 cards = [
     1,   # 0 RED
@@ -190,7 +193,7 @@ while True:
         else:
             print(f"Player {next_player}:    PASS")
         
-        if players_list[0].cards == []:
+        if players_list[next_player].cards == []:
             print(f"Player {next_player}:    Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
             
     if player_move_foward:
