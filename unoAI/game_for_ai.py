@@ -198,10 +198,18 @@ while True:
             last_card_colour = colour(last_card)
 
             if last_card >= 81 and last_card <= 88: # SALTO
-                pass
+                if player_move_foward:
+                    pass
+                
+                else:
+                    pass
             
             elif last_card >= 89 and last_card <= 96: # REVERSE
-                pass
+                if player_move_foward:
+                    player_move_foward = False
+
+                else:
+                    player_move_foward = True
             
             elif last_card >= 97 and last_card <= 104: # +2
                 plus2round += 1
@@ -210,8 +218,10 @@ while True:
                 last_card_colour = color2change
                 last_card = int(-1) # esto lo deberia utilizar para indicar que se puede utiliar cualquier carta 
                 
-            
-        
+            elif last_card >= 109 and last_card <= 112: # +4 & color change
+                plus4round += 1
+                last_card_colour = color2change
+                last_card = int(-1) # esto lo deberia utilizar para indicar que se puede utiliar cualquier carta    
         
         else:
             print(f"Player {next_player}:    PASS")
