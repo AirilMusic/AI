@@ -127,6 +127,11 @@ for i in range(10):
         cards = []
         used_cards = []
         playing = False
+        
+        def choose(posible_cards, last_card, colour, used_cards, plus2, plus4): # y aqui la red que elija la carta
+            pass
+        
+        
     players_list.append(player)
     
 players = random.randint(2, 10)
@@ -186,8 +191,22 @@ while True:
                 posible_cards.append(i)
                 
         if posible_cards != []:
-            pass     #################### Y AQUI ELIGE LA IA
-        
+            chosed_card, color2change = players_list[next_player].choose(posible_cards, last_card, last_card_colour, used_cards, plus2round, plus4round)
+            unsafled_cards -= 1
+            used_cards.append(chosed_card)
+            last_card = chosed_card
+            last_card_colour = colour(last_card)
+
+            if last_card >= 81 and last_card <= 88: # SALTO
+                pass
+            
+            elif last_card >= 89 and last_card <= 96: # REVERSE
+                pass
+            
+            elif last_card >= 97 and last_card <= 104: # +2
+                plus2round += 1
+                
+            
         
         
         else:
