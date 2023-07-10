@@ -206,6 +206,10 @@ while True:
             elif last_card >= 97 and last_card <= 104: # +2
                 plus2round += 1
                 
+            elif last_card >= 105 and last_card <= 108: # COLOR CHANGE
+                last_card_colour = color2change
+                last_card = int(-1) # esto lo deberia utilizar para indicar que se puede utiliar cualquier carta 
+                
             
         
         
