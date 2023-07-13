@@ -140,7 +140,7 @@ def randomize_weights(model):
 
 def first_network():
     model = keras.Sequential()
-    model.add(keras.layers.Dense(random.randint(1, 1000), activation='relu', input_shape=(228,))) # esta capa es la primera y la segunda y van por cojones, el numero de las otras capas ocultas puede salirme del coño si quiero
+    model.add(keras.layers.Dense(random.randint(1, 1000), activation='relu', input_shape=(228))) # esta capa es la primera y la segunda y van por cojones, el numero de las otras capas ocultas puede salirme del coño si quiero
                     
     for i in range(1, 500):
         model.add(keras.layers.Dense(random.randint(1, 1000), activation='relu'))
@@ -196,8 +196,9 @@ while True:
                 # +2 & +4
                 input_neurons[226], input_neurons[227] = plus2, plus4
                 
+                print("uwu")
                 return network.predict(np.array([input_neurons], dtype=int))
-            
+                
         players_list.append(player)
         
     players = random.randint(2, 10)
@@ -246,10 +247,12 @@ while True:
                 for i in players_list[next_player].cards:
                     if colour(i) == last_card_colour or colour(i) == 0 or ((i + 20) == last_card and (i + 20) <= 80) or ((i + 40) == last_card and (i + 40) <= 80) or ((i + 60) == last_card and (i + 60) <= 80) or ((i + 80) == last_card and (i + 80) <= 80) or ((i - 20) == last_card and (i - 20) >= 1) or ((i - 40) == last_card and (i - 40) >= 1) or ((i - 60) == last_card and (i - 60) >= 1) or ((i - 80) == last_card and (i - 80) >= 1):
                         posible_cards.append(i)
+                        
             elif last_card >= 97 and last_card <= 104: # +2
                 for i in players_list[next_player].cards:
                     if last_card >= 97 and last_card <= 104:
                         posible_cards.append(i)
+                        
                 if posible_cards == []:
                     for i in range(2):
                         if unsafled_cards != [] :
@@ -263,6 +266,7 @@ while True:
                 for i in players_list[next_player].cards:
                     if last_card >= 109 and last_card <= 112:
                         posible_cards.append(i)
+                        
                 if posible_cards == []:
                     for i in range(4):
                         if unsafled_cards != []:
