@@ -140,10 +140,10 @@ def randomize_weights(model):
 
 def first_network():
     model = keras.Sequential()
-    model.add(keras.layers.Dense(random.randint(1, 2000), activation='relu', input_shape=(228))) # esta capa es la primera y la segunda y van por cojones, el numero de las otras capas ocultas puede salirme del coño si quiero
+    model.add(keras.layers.Dense(random.randint(1, 1000), activation='relu', input_shape=(228,))) # esta capa es la primera y la segunda y van por cojones, el numero de las otras capas ocultas puede salirme del coño si quiero
                     
     for i in range(1, 500):
-        model.add(keras.layers.Dense(random.randint(1, 2000), activation='relu'))
+        model.add(keras.layers.Dense(random.randint(1, 1000), activation='relu'))
 
     randomize_weights(model)
 
@@ -178,8 +178,25 @@ while True:
                 
                 
                 # tengo que traducir los datos a las 228 neuronas
+                input_neurons = []
+                for i in range(228):
+                    input_neurons.append(0)
                 
-                return network.predict()
+                # 112 neuronas de 0 o 1 dependiendo si esa carta la tiene el jugador o no
+                for i in posible_cards:
+                    input_neurons[i-1] = 1
+                    
+                # last card & colour
+                input_neurons[112], input_neurons[113] = last_card, colour
+                
+                # 112 neuronas de las cartas usadas, si esta usada 1 y sino 0
+                for i in used_cards:
+                    input_neurons[i + 112] = 1
+                
+                # +2 & +4
+                input_neurons[226], input_neurons[227] = plus2, plus4
+                
+                return network.predict(np.array([input_neurons], dtype=int))
             
         players_list.append(player)
         
