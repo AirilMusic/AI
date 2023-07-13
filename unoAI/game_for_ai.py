@@ -135,16 +135,18 @@ for i in range(10):
     players_list.append(player)
     
 players = random.randint(2, 10)
-unsafled_cards = 112
+unsafled_cards = []
+for i in range(1, 112+1):
+    unsafled_cards.append(i)
 used_cards = []
 tota_cards = 112 #esto no hay que cambiarlo, es por si necesito saber cuanto es el total y no tener que hacer len(), para reducir el numero de operaciones
 
 for i in range(players):
     players_list[i].playing = True
     for a in range(7):
-        card = int(random.randint(1, unsafled_cards))
-        players_list[i].cards.append(random.choice(cards))
-        unsafled_cards -= 1
+        card = int(random.choice(unsafled_cards))
+        players_list[i].cards.append(card)
+        unsafled_cards.remove(card)
         used_cards.append(card)
         cards.remove(cards[card])
 
@@ -197,20 +199,26 @@ while finished == False:
                 if last_card >= 97 and last_card <= 104:
                     posible_cards.append(i)
             if posible_cards == []:
-                pass ################################### AQUI TIENE QUE AÑADIRLE 2 CARTAS AL JUGADOR
-            
-            
-            
+                for i in range(2):
+                    if unsafled_cards != []:
+                        card = int(random.choice(unsafled_cards))
+                        players_list[next_player].cards.append(card)
+                        unsafled_cards.remove(card)
+                        used_cards.append(card)
+                        cards.remove(cards[card])
             
         elif last_card >= 109 and last_card <= 112: # +4
             for i in players_list[next_player].cards:
                 if last_card >= 109 and last_card <= 112:
                     posible_cards.append(i)
             if posible_cards == []:
-                pass ################################### AQUI TIENE QUE AÑADIRLE 4 CARTAS AL JUGADOR
-            
-            
-            
+                for i in range(4):
+                    if unsafled_cards != []:
+                        card = int(random.choice(unsafled_cards))
+                        players_list[next_player].cards.append(card)
+                        unsafled_cards.remove(card)
+                        used_cards.append(card)
+                        cards.remove(cards[card])
                     
         if posible_cards != []:
             chosed = False
