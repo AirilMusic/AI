@@ -193,41 +193,52 @@ while finished == False:
                 posible_cards.append(i)
                 
         if posible_cards != []:
-            chosed_card, color2change = players_list[next_player].choose(posible_cards, last_card, last_card_colour, used_cards, plus2round, plus4round)
-            unsafled_cards -= 1
-            used_cards.append(chosed_card)
-            last_card = chosed_card
-            last_card_colour = colour(last_card)
+            chosed = False
+            while True:
+                chosed_card, color2change = players_list[next_player].choose(posible_cards, last_card, last_card_colour, used_cards, plus2round, plus4round)
+                unsafled_cards -= 1
+                used_cards.append(chosed_card)
+                last_card = chosed_card
+                last_card_colour = colour(last_card)
 
-            if last_card >= 81 and last_card <= 88: # SALTO
-                if player_move_foward:
-                    next_player += 1
-                    if next_player > players - 1:
-                        next_player = 0
+                posible_cards.remove(chosed_card)
+                used_cards.append(chosed_card)
                 
-                else:
-                    next_player -= 1
-                    if next_player < 0:
-                        next_player = players - 1
-            
-            elif last_card >= 89 and last_card <= 96: # REVERSE
-                if player_move_foward:
-                    player_move_foward = False
+                if chosed_card != 1000:
+                    chosed = True
+                    
+                if chosed_card == 1000 and chosed == True:
+                    if last_card >= 81 and last_card <= 88: # SALTO
+                        if player_move_foward:
+                            next_player += 1
+                            if next_player > players - 1:
+                                next_player = 0
+                        
+                        else:
+                            next_player -= 1
+                            if next_player < 0:
+                                next_player = players - 1
+                    
+                    elif last_card >= 89 and last_card <= 96: # REVERSE
+                        if player_move_foward:
+                            player_move_foward = False
 
-                else:
-                    player_move_foward = True
-            
-            elif last_card >= 97 and last_card <= 104: # +2
-                plus2round += 1
-                
-            elif last_card >= 105 and last_card <= 108: # COLOR CHANGE
-                last_card_colour = color2change
-                last_card = int(-1) # esto lo deberia utilizar para indicar que se puede utiliar cualquier carta 
-                
-            elif last_card >= 109 and last_card <= 112: # +4 & color change
-                plus4round += 1
-                last_card_colour = color2change
-                last_card = int(-1) # esto lo deberia utilizar para indicar que se puede utiliar cualquier carta    
+                        else:
+                            player_move_foward = True
+                    
+                    elif last_card >= 97 and last_card <= 104: # +2
+                        plus2round += 1
+                        
+                    elif last_card >= 105 and last_card <= 108: # COLOR CHANGE
+                        last_card_colour = color2change
+                        last_card = int(-1) # esto lo deberia utilizar para indicar que se puede utiliar cualquier carta 
+                        
+                    elif last_card >= 109 and last_card <= 112: # +4 & color change
+                        plus4round += 1
+                        last_card_colour = color2change
+                        last_card = int(-1) # esto lo deberia utilizar para indicar que se puede utiliar cualquier carta    
+                    
+                    break
         
         else:
             print(f"Player {next_player}:    PASS")
