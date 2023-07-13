@@ -140,7 +140,7 @@ def randomize_weights(model):
 
 def first_network():
     model = keras.Sequential()
-    model.add(keras.layers.Dense(random.randint(1, 1000), activation='relu', input_shape=(228))) # esta capa es la primera y la segunda y van por cojones, el numero de las otras capas ocultas puede salirme del coño si quiero
+    model.add(keras.layers.Dense(random.randint(1, 1000), activation='relu', input_shape=(228,))) # esta capa es la primera y la segunda y van por cojones, el numero de las otras capas ocultas puede salirme del coño si quiero
                     
     for i in range(1, 500):
         model.add(keras.layers.Dense(random.randint(1, 1000), activation='relu'))
