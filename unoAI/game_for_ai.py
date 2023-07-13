@@ -178,7 +178,9 @@ last_card_colour = colour(last_card)
 next_player = 0
 player_move_foward = True # si es false es porque al haber cambio de sentido va para a tras
 
-while True:
+finished = False
+
+while finished == False:
     if next_player < 0:
         next_player = players - 1
     if next_player > 9:
@@ -199,10 +201,14 @@ while True:
 
             if last_card >= 81 and last_card <= 88: # SALTO
                 if player_move_foward:
-                    pass
+                    next_player += 1
+                    if next_player > 9:
+                        next_player = 0
                 
                 else:
-                    pass
+                    next_player -= 1
+                    if next_player < 0:
+                        next_player = 9
             
             elif last_card >= 89 and last_card <= 96: # REVERSE
                 if player_move_foward:
@@ -228,8 +234,14 @@ while True:
         
         if players_list[next_player].cards == []:
             print(f"Player {next_player}:    Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
+            finished = True
             
     if player_move_foward:
         next_player += 1
+        if next_player > 9:
+            next_player = 0
+            
     else:
         next_player -= 1
+        if next_player < 0:
+            next_player = 9
