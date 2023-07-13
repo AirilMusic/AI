@@ -168,8 +168,16 @@ while True:
                     network = first_network()
                     network.add(keras.layers.Dense(len(posible_cards), activation='softmax')) # y esta es la capa de salida que tambien la tengo que poner por cojones
                     
+                    output_layer = network.layers[-1]
+                    weights = output_layer.get_weights()
+                    weights[0].fill(0.5)
+                    output_layer.set_weights(weights)
+                    
                 else: # copia la red ganadora pero le hace un 20% de modificaciones
                     pass
+                
+                
+                # tengo que traducir los datos a las 228 neuronas
                 
                 return network.predict()
             
@@ -189,15 +197,14 @@ while True:
             players_list[i].cards.append(card)
             unsafled_cards.remove(card)
             used_cards.append(card)
-            unsafled_cards.remove(card)
 
     for i in range(players):
         print("\nPlayer:", players_list[i].player_id)
         print(players_list[i].cards)
 
     init_card = random.choice(unsafled_cards)
-    used_cards.append(card)
-    unsafled_cards.remove(card)
+    used_cards.append(init_card)
+    unsafled_cards.remove(init_card)
 
     plus2round = 0
     plus4round = 0
@@ -228,7 +235,7 @@ while True:
                         posible_cards.append(i)
                 if posible_cards == []:
                     for i in range(2):
-                        if unsafled_cards != []:
+                        if unsafled_cards != [] :
                             card = int(random.choice(unsafled_cards))
                             players_list[next_player].cards.append(card)
                             unsafled_cards.remove(card)
@@ -320,3 +327,6 @@ while True:
             next_player -= 1
             if next_player < 0:
                 next_player = players - 1
+                
+        print("Last card:", last_card, "Player:", player)
+        print(players_list[next_player].cards)
