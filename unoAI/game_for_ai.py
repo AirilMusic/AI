@@ -202,13 +202,13 @@ while finished == False:
             if last_card >= 81 and last_card <= 88: # SALTO
                 if player_move_foward:
                     next_player += 1
-                    if next_player > 9:
+                    if next_player > players - 1:
                         next_player = 0
                 
                 else:
                     next_player -= 1
                     if next_player < 0:
-                        next_player = 9
+                        next_player = players - 1
             
             elif last_card >= 89 and last_card <= 96: # REVERSE
                 if player_move_foward:
@@ -238,10 +238,10 @@ while finished == False:
             
     if player_move_foward:
         next_player += 1
-        if next_player > 9:
+        if next_player > players - 1:
             next_player = 0
             
     else:
         next_player -= 1
         if next_player < 0:
-            next_player = 9
+            next_player = players - 1
