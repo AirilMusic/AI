@@ -188,10 +188,30 @@ while finished == False:
         
     if players_list[next_player].cards != [] and players_list[next_player].playing == True:
         posible_cards = []
-        for i in players_list[next_player].cards:
-            if colour(i) == last_card_colour or colour(i) == 0:
-                posible_cards.append(i)
-                
+        if last_card < 97 or last_card > 104 or last_card < 109 or last_card > 112: # esto es para que no sea +2 o +4
+            for i in players_list[next_player].cards:
+                if colour(i) == last_card_colour or colour(i) == 0:
+                    posible_cards.append(i)
+        elif last_card >= 97 and last_card <= 104: # +2
+            for i in players_list[next_player].cards:
+                if last_card >= 97 and last_card <= 104:
+                    posible_cards.append(i)
+            if posible_cards == []:
+                pass ################################### AQUI TIENE QUE AÑADIRLE 2 CARTAS AL JUGADOR
+            
+            
+            
+            
+        elif last_card >= 109 and last_card <= 112: # +4
+            for i in players_list[next_player].cards:
+                if last_card >= 109 and last_card <= 112:
+                    posible_cards.append(i)
+            if posible_cards == []:
+                pass ################################### AQUI TIENE QUE AÑADIRLE 4 CARTAS AL JUGADOR
+            
+            
+            
+                    
         if posible_cards != []:
             chosed = False
             while True:
@@ -237,6 +257,14 @@ while finished == False:
                         plus4round += 1
                         last_card_colour = color2change
                         last_card = int(-1) # esto lo deberia utilizar para indicar que se puede utiliar cualquier carta    
+                    
+                    if plus2round > 0:
+                        if last_card >= 97 and last_card <= 104:
+                            plus2round += 1
+                            
+                    if plus4round > 0:
+                        if last_card >= 109 and last_card <= 112:
+                            plus4round += 1
                     
                     break
         
