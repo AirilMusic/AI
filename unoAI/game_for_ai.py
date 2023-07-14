@@ -134,9 +134,10 @@ def colour(card):
 def randomize_weights(model):
     for layer in model.layers:
         if hasattr(layer, 'kernel_initializer'):
-            layer.kernel.initializer.run(session=tf.compat.v1.keras.backend.get_session())
-        if hasattr(layer, 'bias_initializer'):
-            layer.bias.initializer.run(session=tf.compat.v1.keras.backend.get_session())
+            weights = layer.get_weights()
+            weights = [np.random.randint(1, 112, size=w.shape) for w in weights]
+            layer.set_weights(weights)
+    return model
 
 def first_network():
     model = keras.Sequential()
@@ -145,7 +146,7 @@ def first_network():
     for i in range(1, 500):
         model.add(keras.layers.Dense(random.randint(1, 1000), activation='relu'))
 
-    randomize_weights(model)
+    model = randomize_weights(model)
 
     return model
 
@@ -196,7 +197,6 @@ while True:
                 # +2 & +4
                 input_neurons[226], input_neurons[227] = plus2, plus4
                 
-                print("uwu")
                 return network.predict(np.array([input_neurons], dtype=int))
                 
         players_list.append(player)
@@ -279,14 +279,15 @@ while True:
             if posible_cards != []:
                 chosed = False
                 while True:
-                    chosed_card, color2change = players_list[next_player].choose(posible_cards, last_card, last_card_colour, used_cards, plus2round, plus4round)
-                    unsafled_cards -= 1
-                    used_cards.append(chosed_card)
+                    chosed_card = players_list[next_player].choose(posible_cards, last_card, last_card_colour, used_cards, plus2round, plus4round)
+                    
+                    print("CHOSED CARDS:", chosed_card)
+                    
+                    if chosed_card in unsafled_cards:
+                        unsafled_cards.remove(chosed_card)
+                        used_cards.append(chosed_card)
                     last_card = chosed_card
                     last_card_colour = colour(last_card)
-
-                    posible_cards.remove(chosed_card)
-                    used_cards.append(chosed_card)
                     
                     if chosed_card != 1000:
                         chosed = True
@@ -314,12 +315,21 @@ while True:
                             plus2round += 1
                             
                         elif last_card >= 105 and last_card <= 108: # COLOR CHANGE
-                            last_card_colour = color2change
+                            colors = []
+                            for i in players_list[next_player].cards:
+                                colors.append(colour(i))
+                            last_card_colour = max(colors)
+                            
                             last_card = int(-1) # esto lo deberia utilizar para indicar que se puede utiliar cualquier carta 
                             
                         elif last_card >= 109 and last_card <= 112: # +4 & color change
                             plus4round += 1
-                            last_card_colour = color2change
+                            
+                            colors = []
+                            for i in players_list[next_player].cards:
+                                colors.append(colour(i))
+                            last_card_colour = max(colors)
+                            
                             last_card = int(-1) # esto lo deberia utilizar para indicar que se puede utiliar cualquier carta    
                         
                         if plus2round > 0:
