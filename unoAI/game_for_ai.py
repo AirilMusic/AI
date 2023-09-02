@@ -236,10 +236,8 @@ while True:
     while finished == False:
         if next_player < 0:
             next_player = players - 1
-        if next_player > 9:
+        if next_player > players-1:
             next_player = 0    
-        
-        player = players_list[next_player]
 
         if players_list[next_player].cards != [] and players_list[next_player].playing == True:
             posible_cards = []
@@ -275,24 +273,36 @@ while True:
                             unsafled_cards.remove(card)
                             used_cards.append(card)
                             unsafled_cards.remove(card)
-                        
+            print("pos cards:", posible_cards)
+
             if posible_cards != []:
                 chosed = False
                 while True:
                     chosed_card = players_list[next_player].choose(posible_cards, last_card, last_card_colour, used_cards, plus2round, plus4round, players_list[next_player].played)
                     
-                    print("CHOSED CARDS:", chosed_card)
+                    print("CHOSED CARD:", chosed_card)
                     
                     if chosed_card in unsafled_cards:
                         unsafled_cards.remove(chosed_card)
                         used_cards.append(chosed_card)
+                        posible_cards.remove(chosed_card)
+                        players_list[next_player].cards.remove(chosed_card)
+                    else:
+                        try:
+                            posible_cards.remove(chosed_card)
+                            players_list[next_player].cards.remove(chosed_card)
+                        except:
+                            pass
+                    
                     last_card = chosed_card
+                    print("uwu")
                     last_card_colour = colour(last_card)
                     
-                    if chosed_card != 1000:
-                        chosed = True
-    
-                    if chosed_card == 1000 and chosed == True:
+                    for i in players_list:
+                        if colour(i) == last_card_colour:
+                            posible_cards.append(i)
+
+                    if posible_cards == []:
                         if last_card >= 81 and last_card <= 88: # SALTO
                             if player_move_foward:
                                 next_player += 1
@@ -348,7 +358,7 @@ while True:
             if players_list[next_player].cards == []:
                 print(f"Player {next_player}:    Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
                 finished = True
-                
+
         if player_move_foward:
             next_player += 1
             if next_player > players - 1:
@@ -359,5 +369,5 @@ while True:
             if next_player < 0:
                 next_player = players - 1
                 
-        print("Last card:", last_card, "Player:", player)
+        print("Last card:", last_card, "Player:", next_player)
         print(players_list[next_player].cards)
