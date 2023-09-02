@@ -135,72 +135,70 @@ def randomize_weights(model):
     for layer in model.layers:
         if hasattr(layer, 'kernel_initializer'):
             weights = layer.get_weights()
-            weights = [np.random.randint(1, 112, size=w.shape) for w in weights]
+            weights = [np.random.random_sample(w.shape) for w in weights]
             layer.set_weights(weights)
     return model
 
 def first_network():
     model = keras.Sequential()
-    model.add(keras.layers.Dense(random.randint(1, 1000), activation='relu', input_shape=(228,))) # esta capa es la primera y la segunda y van por cojones, el numero de las otras capas ocultas puede salirme del coño si quiero
-                    
-    for i in range(1, 500):
+    model.add(keras.layers.Dense(random.randint(1, 1000), activation='relu', input_shape=(228,)))
+    for i in range(1, random.randint(10, 500)):
         model.add(keras.layers.Dense(random.randint(1, 1000), activation='relu'))
-
     model = randomize_weights(model)
-
     return model
 
 partida = 1
 
-while True:
-    players_list = []
-
-    for i in range(10):
-        class player():
-            player_id = i+1 # esto realmente no es necesario porque es la posicion del array + 1, pero bueno, si no lo utilizo lo quitare
-            cards = []
-            used_cards = []
-            playing = False
-            
-            network = None
-            
-            def choose(posible_cards, last_card, colour, used_cards, plus2, plus4): # y aqui la red que elija la carta
-                if partida == 1: # genera la red de forma aleatoria
-                    network = first_network()
-                    network.add(keras.layers.Dense(len(posible_cards), activation='softmax')) # y esta es la capa de salida que tambien la tengo que poner por cojones
-                    
-                    output_layer = network.layers[-1]
-                    weights = output_layer.get_weights()
-                    weights[0].fill(0.5)
-                    output_layer.set_weights(weights)
-                    
-                else: # copia la red ganadora pero le hace un 20% de modificaciones
-                    pass
-                
-                
-                # tengo que traducir los datos a las 228 neuronas
-                input_neurons = []
-                for i in range(228):
-                    input_neurons.append(0)
-                
-                # 112 neuronas de 0 o 1 dependiendo si esa carta la tiene el jugador o no
-                for i in posible_cards:
-                    input_neurons[i-1] = 1
-                    
-                # last card & colour
-                input_neurons[112], input_neurons[113] = last_card, colour
-                
-                # 112 neuronas de las cartas usadas, si esta usada 1 y sino 0
-                for i in used_cards:
-                    input_neurons[i + 112] = 1
-                
-                # +2 & +4
-                input_neurons[226], input_neurons[227] = plus2, plus4
-                
-                return network.predict(np.array([input_neurons], dtype=int))
-                
-        players_list.append(player)
+class Player:
+    def __init__(self, player_id):
+        self.player_id = player_id
+        self.cards = []
+        self.used_cards = []
+        self.playing = False
+        self.played = False
+        self.network = None
+    
+    def choose(self, posible_cards, last_card, colour, used_cards, plus2, plus4, played):
+        if partida == 1 and self.played == False:
+            self.network = first_network()
+            self.played = True
         
+        elif played == False: # copia la red ganadora pero le hace un 20% de modificaciones
+            played = True
+        
+        self.network.pop()
+        self.network.add(keras.layers.Dense(len(posible_cards), activation='softmax')) # y esta es la capa de salida que se actualiza al numero de cartas que se pueden jugar
+        output_layer = self.network.layers[-1]
+        weights = output_layer.get_weights()
+        for i in range(len(weights)):
+            weights[i].fill(0.5)
+        output_layer.set_weights(weights)
+
+        # tengo que traducir los datos a las 228 neuronas
+        input_neurons = []
+        for i in range(228):
+            input_neurons.append(0)
+        
+        # 112 neuronas de 0 o 1 dependiendo si esa carta la tiene el jugador o no
+        for i in posible_cards:
+            input_neurons[i-1] = 1
+            
+        # last card & colour
+        input_neurons[112], input_neurons[113] = last_card, colour
+        
+        # 112 neuronas de las cartas usadas, si esta usada 1 y sino 0
+        for i in used_cards:
+            input_neurons[i + 112] = 1
+        
+        # +2 & +4
+        input_neurons[226], input_neurons[227] = plus2, plus4
+        prediction = list(self.network.predict(np.array([input_neurons], dtype=int)))
+        return self.cards[prediction.index(max(prediction))]
+    
+players_list = [Player(i+1) for i in range(10)]
+                    
+
+while True:
     players = random.randint(2, 10)
     unsafled_cards = []
     for i in range(1, 112+1):
@@ -240,7 +238,9 @@ while True:
             next_player = players - 1
         if next_player > 9:
             next_player = 0    
-            
+        
+        player = players_list[next_player]
+
         if players_list[next_player].cards != [] and players_list[next_player].playing == True:
             posible_cards = []
             if last_card < 97 or last_card > 104 or last_card < 109 or last_card > 112: # esto es para que no sea +2 o +4
@@ -279,7 +279,7 @@ while True:
             if posible_cards != []:
                 chosed = False
                 while True:
-                    chosed_card = players_list[next_player].choose(posible_cards, last_card, last_card_colour, used_cards, plus2round, plus4round)
+                    chosed_card = players_list[next_player].choose(posible_cards, last_card, last_card_colour, used_cards, plus2round, plus4round, players_list[next_player].played)
                     
                     print("CHOSED CARDS:", chosed_card)
                     
