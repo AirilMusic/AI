@@ -194,7 +194,7 @@ class Player:
         input_neurons[226], input_neurons[227] = plus2, plus4
         prediction = list(self.network.predict(np.array([input_neurons], dtype=int)))
         print("pid:", self.player_id, "pred:", prediction, "cards:", self.cards)
-        return self.cards[prediction.index(max(prediction))]
+        return posible_cards[prediction.index(max(prediction))]
     
 players_list = [Player(i+1) for i in range(10)]
                     
@@ -274,14 +274,14 @@ while True:
                             unsafled_cards.remove(card)
                             used_cards.append(card)
                             unsafled_cards.remove(card)
-            print("pos cards:", posible_cards)
+            print("[!] pos cards:", posible_cards)
 
             if posible_cards != []:
                 chosed = False
                 while True:
                     chosed_card = players_list[next_player].choose(posible_cards, last_card, last_card_colour, used_cards, plus2round, plus4round, players_list[next_player].played)
                     
-                    print("CHOSED CARD:", chosed_card)
+                    print("\nCHOSED CARD:", chosed_card)
                     
                     used_cards.append(chosed_card)
                     posible_cards.remove(chosed_card)
@@ -294,7 +294,7 @@ while True:
                         if colour(i) == last_card_colour:
                             posible_cards.append(i)
                     
-                    print("pos_cards:", posible_cards)
+                    print("[-] pos_cards:", posible_cards)
 
                     if posible_cards == []:
                         if last_card >= 81 and last_card <= 88: # SALTO
@@ -364,4 +364,4 @@ while True:
                 next_player = players - 1
                 
         print("Last card:", last_card, "Player:", next_player)
-        print(players_list[next_player].cards)
+        print("[-] cards:", players_list[next_player].cards)
