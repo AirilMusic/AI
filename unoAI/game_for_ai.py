@@ -149,6 +149,7 @@ def first_network():
     return model
 
 partida = 1
+winner_network = None
 
 class Player:
     def __init__(self, player_id):
@@ -164,7 +165,29 @@ class Player:
             self.network = first_network()
             self.played = True
         
-        elif played == False: # copia la red ganadora pero le hace un 20% de modificaciones
+        elif played == False: # copia la red ganadora pero les hace modificaciones
+            self.network = winner_network
+            
+            if self.player_id != 1: # la primera red la deja como la ganadora, las demas tienen una probabilidad de mutar
+                for layer in self.network.layers:
+                    if hasattr(layer, 'kernel_initializer') and random.randint(1, 10) == 1: # 10% de probabilidades de que una capa cambie sus pesos
+                        weights = layer.get_weights()
+                        weights = [np.random.random_sample(w.shape) for w in weights]
+                        layer.set_weights(weights)
+                
+                if random.randint(1, 10) == 1: # 10% de probabilidades de que se le quiten capas
+                    n_layers = len(self.network.layers)
+                    for i in range(random.randint(1, int(n_layers/2))):
+                        self.network.pop()
+
+                if random.randint(1, 10) == 1: # 10% de probabilidades de que se le añadadan capas nuevas
+                    self.network.pop() # se le quita la capa de salida
+
+                    for i in range(1, random.randint(1, 100)):
+                        self.network.add(keras.layers.Dense(random.randint(1, 1000), activation='relu'))
+
+                    self.network.add(keras.layers.Dense(2, activation='softmax')) # capa de salida placeholder
+
             played = True
         
         self.network.pop()
@@ -198,7 +221,6 @@ class Player:
         return posible_cards[prediction.index(max(prediction))]
     
 players_list = [Player(i+1) for i in range(10)]
-                    
 
 while True:
     players = random.randint(2, 10)
@@ -321,7 +343,8 @@ while True:
                             colors = []
                             for i in players_list[next_player].cards:
                                 colors.append(colour(i))
-                            last_card_colour = max(colors)
+                            if colors != []:
+                                last_card_colour = max(colors)
                             
                             last_card = int(-1) # esto lo deberia utilizar para indicar que se puede utiliar cualquier carta 
                             
@@ -355,6 +378,10 @@ while True:
             if players_list[next_player].cards == []:
                 print(f"Player {next_player}:    Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
                 finished = True
+                winner_network = players_list[next_player].network
+                for i in players_list:
+                    i.played = False
+                partida += 1
                 time.sleep(3)
 
         if player_move_foward:
