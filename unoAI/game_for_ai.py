@@ -3,6 +3,7 @@ import pygame
 import tensorflow as tf
 from tensorflow import keras
 import numpy as np
+import time
 
 cards = [
     1,   # 0 RED
@@ -249,7 +250,7 @@ while True:
                         
             elif last_card >= 97 and last_card <= 104: # +2
                 for i in players_list[next_player].cards:
-                    if last_card >= 97 and last_card <= 104:
+                    if i >= 97 and i <= 104:
                         posible_cards.append(i)
                         
                 if posible_cards == []:
@@ -259,11 +260,10 @@ while True:
                             players_list[next_player].cards.append(card)
                             unsafled_cards.remove(card)
                             used_cards.append(card)
-                            unsafled_cards.remove(card)
                 
             elif last_card >= 109 and last_card <= 112: # +4
                 for i in players_list[next_player].cards:
-                    if last_card >= 109 and last_card <= 112:
+                    if i >= 109 and i <= 112:
                         posible_cards.append(i)
                         
                 if posible_cards == []:
@@ -273,8 +273,9 @@ while True:
                             players_list[next_player].cards.append(card)
                             unsafled_cards.remove(card)
                             used_cards.append(card)
-                            unsafled_cards.remove(card)
+
             print("[!] pos cards:", posible_cards)
+            print("[!] player_cards:", players_list[next_player].cards)
 
             if posible_cards != []:
                 chosed = False
@@ -283,18 +284,16 @@ while True:
                     
                     print("\nCHOSED CARD:", chosed_card)
                     
+                    for i in posible_cards:
+                        if colour(i) != colour(chosed_card):
+                            posible_cards.remove(i)
+
                     used_cards.append(chosed_card)
                     posible_cards.remove(chosed_card)
                     players_list[next_player].cards.remove(chosed_card)
                     
                     last_card = chosed_card
                     last_card_colour = colour(last_card)
-                    
-                    for i in players_list[next_player].cards:
-                        if colour(i) == last_card_colour:
-                            posible_cards.append(i)
-                    
-                    print("[-] pos_cards:", posible_cards)
 
                     if posible_cards == []:
                         if last_card >= 81 and last_card <= 88: # SALTO
@@ -348,10 +347,15 @@ while True:
             
             else:
                 print(f"Player {next_player}:    PASS")
+                card = int(random.choice(unsafled_cards))
+                players_list[next_player].cards.append(card)
+                unsafled_cards.remove(card)
+                used_cards.append(card)
             
             if players_list[next_player].cards == []:
                 print(f"Player {next_player}:    Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
                 finished = True
+                time.sleep(3)
 
         if player_move_foward:
             next_player += 1
@@ -362,6 +366,11 @@ while True:
             next_player -= 1
             if next_player < 0:
                 next_player = players - 1
+            
+        if unsafled_cards == []: # si la baraja se queda sin cartas
+            for i in used_cards:
+                unsafled_cards.append(i)
+                used_cards.remove(i)
                 
         print("Last card:", last_card, "Player:", next_player)
         print("[-] cards:", players_list[next_player].cards)
