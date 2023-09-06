@@ -1,0 +1,1 @@
+Gracias Kele por los SVG de las cartas individualemente tk <3 uwu
