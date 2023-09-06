@@ -19,7 +19,7 @@ import time
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 pygame.init()
-size = (900, 700)
+size = (900, 530)
 screen = pygame.display.set_mode(size)
 font = pygame.font.SysFont(None, 36)
 
@@ -144,7 +144,48 @@ cards = {
 }
 
 back_side = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (60, 120))
-screen.blit(back_side, (420, 200))
+screen.blit(back_side, (420, 100))
+
+place_holder_p1 = (10, 50)
+place_holder_p2 = (10, 140)
+place_holder_p3 = (10, 230)
+place_holder_p4 = (10, 320)
+place_holder_p5 = (10, 0)
+place_holder_p6 = (850, 50)
+place_holder_p7 = (850, 140)
+place_holder_p8 = (850, 230)
+place_holder_p9 = (850, 320)
+place_holder_p10 = (850, 0)
+
+place_holder_test = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (40, 80))
+screen.blit(place_holder_test, (10, 50))
+
+place_holder_test = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (40, 80))
+screen.blit(place_holder_test, (10, 140))
+
+place_holder_test = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (40, 80))
+screen.blit(place_holder_test, (10, 230))
+
+place_holder_test = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (40, 80))
+screen.blit(place_holder_test, (10, 320))
+
+place_holder_test = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (40, 80))
+screen.blit(place_holder_test, (10, 410))
+
+place_holder_test = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (40, 80))
+screen.blit(place_holder_test, (850, 50))
+
+place_holder_test = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (40, 80))
+screen.blit(place_holder_test, (850, 140))
+
+place_holder_test = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (40, 80))
+screen.blit(place_holder_test, (850, 230))
+
+place_holder_test = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (40, 80))
+screen.blit(place_holder_test, (850, 320))
+
+place_holder_test = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (40, 80))
+screen.blit(place_holder_test, (850, 410))
 
 def colour(card):
         if (card >= 1 and card <= 20) or card == 81 or card == 82 or card == 89 or card == 90 or card == 97 or card == 98:
@@ -291,7 +332,7 @@ while True:
     while finished == False:
         if last_card != -1:
             lc = pygame.transform.scale(cards[last_card], (60, 120))
-        screen.blit(lc, (420, 400))
+        screen.blit(lc, (420, 300))
         pygame.display.flip()
         que_no_pete_al_clicar_fuera()
 
@@ -341,7 +382,7 @@ while True:
                 while True:
                     if last_card != -1:
                         lc = pygame.transform.scale(cards[last_card], (60, 120))
-                    screen.blit(lc, (420, 400))
+                    screen.blit(lc, (420, 300))
                     chosed_card = players_list[next_player].choose(posible_cards, last_card, last_card_colour, used_cards, plus2round, plus4round, players_list[next_player].played)
                     
                     print("\nCHOSED CARD:", chosed_card)
