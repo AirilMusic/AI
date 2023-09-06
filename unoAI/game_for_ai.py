@@ -1,14 +1,27 @@
+##################### TO DO LIST ####################
+#
+#   Al ejecutar el script que de dos opciones, cargar modelo o correr desde 0
+#
+#   Hacer otro script optimizado y sin UI y que cada x partidas (por ejemplo 10) exporte el modelo
+#
+#####################################################
+
+
 import random
 import pygame
 import sys
+import os
 import tensorflow as tf
 from tensorflow import keras
 import numpy as np
 import time
 
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
 pygame.init()
-size = (800, 500)
+size = (900, 700)
 screen = pygame.display.set_mode(size)
+font = pygame.font.SysFont(None, 36)
 
 def que_no_pete_al_clicar_fuera():
     for event in pygame.event.get():
@@ -16,119 +29,122 @@ def que_no_pete_al_clicar_fuera():
             sys.exit()
 
 cards = {
-    1 : pygame.transform.scale(pygame.image.load('assets/red/0.jpg'), (20, 40)),   # 0 RED
-    2 : pygame.transform.scale(pygame.image.load('assets/red/0.jpg'), (20, 40)),   # 0 RED
-    3 : pygame.transform.scale(pygame.image.load('assets/red/1.jpg'), (20, 40)),   # 1 RED
-    4 : pygame.transform.scale(pygame.image.load('assets/red/1.jpg'), (20, 40)),   # 1 RED
-    5 : pygame.transform.scale(pygame.image.load('assets/red/2.jpg'), (20, 40)),   # 2 RED
-    6 : pygame.transform.scale(pygame.image.load('assets/red/2.jpg'), (20, 40)),   # 2 RED
-    7 : pygame.transform.scale(pygame.image.load('assets/red/3.jpg'), (20, 40)),   # 3 RED
-    8 : pygame.transform.scale(pygame.image.load('assets/red/3.jpg'), (20, 40)),   # 3 RED
-    9 : pygame.transform.scale(pygame.image.load('assets/red/4.jpg'), (20, 40)),   # 4 RED
-    10 : pygame.transform.scale(pygame.image.load('assets/red/4.jpg'), (20, 40)),  # 4 RED
-    11 : pygame.transform.scale(pygame.image.load('assets/red/5.jpg'), (20, 40)),  # 5 RED
-    12 : pygame.transform.scale(pygame.image.load('assets/red/5.jpg'), (20, 40)),  # 5 RED
-    13 : pygame.transform.scale(pygame.image.load('assets/red/6.jpg'), (20, 40)),  # 6 RED
-    14 : pygame.transform.scale(pygame.image.load('assets/red/6.jpg'), (20, 40)),  # 6 RED
-    15 : pygame.transform.scale(pygame.image.load('assets/red/7.jpg'), (20, 40)),  # 7 RED
-    16 : pygame.transform.scale(pygame.image.load('assets/red/7.jpg'), (20, 40)),  # 7 RED
-    17 : pygame.transform.scale(pygame.image.load('assets/red/8.jpg'), (20, 40)),  # 8 RED
-    18 : pygame.transform.scale(pygame.image.load('assets/red/8.jpg'), (20, 40)),  # 8 RED
-    19 : pygame.transform.scale(pygame.image.load('assets/red/9.jpg'), (20, 40)),  # 9 RED
-    20 : pygame.transform.scale(pygame.image.load('assets/red/9.jpg'), (20, 40)),  # 9 RED
-    21 : pygame.transform.scale(pygame.image.load('assets/yellow/0.jpg'), (20, 40)),  # 0 YELLOW
-    22 : pygame.transform.scale(pygame.image.load('assets/yellow/0.jpg'), (20, 40)),  # 0 YELLOW
-    23 : pygame.transform.scale(pygame.image.load('assets/yellow/1.jpg'), (20, 40)),  # 1 YELLOW
-    24 : pygame.transform.scale(pygame.image.load('assets/yellow/1.jpg'), (20, 40)),  # 1 YELLOW
-    25 : pygame.transform.scale(pygame.image.load('assets/yellow/2.jpg'), (20, 40)),  # 2 YELLOW
-    26 : pygame.transform.scale(pygame.image.load('assets/yellow/2.jpg'), (20, 40)),  # 2 YELLOW
-    27 : pygame.transform.scale(pygame.image.load('assets/yellow/3.jpg'), (20, 40)),  # 3 YELLOW
-    28 : pygame.transform.scale(pygame.image.load('assets/yellow/3.jpg'), (20, 40)),  # 3 YELLOW
-    29 : pygame.transform.scale(pygame.image.load('assets/yellow/4.jpg'), (20, 40)),  # 4 YELLOW
-    30 : pygame.transform.scale(pygame.image.load('assets/yellow/4.jpg'), (20, 40)),  # 4 YELLOW
-    31 : pygame.transform.scale(pygame.image.load('assets/yellow/5.jpg'), (20, 40)),  # 5 YELLOW
-    32 : pygame.transform.scale(pygame.image.load('assets/yellow/5.jpg'), (20, 40)),  # 5 YELLOW
-    33 : pygame.transform.scale(pygame.image.load('assets/yellow/6.jpg'), (20, 40)),  # 6 YELLOW
-    34 : pygame.transform.scale(pygame.image.load('assets/yellow/6.jpg'), (20, 40)),  # 6 YELLOW
-    35 : pygame.transform.scale(pygame.image.load('assets/yellow/7.jpg'), (20, 40)),  # 7 YELLOW
-    36 : pygame.transform.scale(pygame.image.load('assets/yellow/7.jpg'), (20, 40)),  # 7 YELLOW
-    37 : pygame.transform.scale(pygame.image.load('assets/yellow/8.jpg'), (20, 40)),  # 8 YELLOW
-    38 : pygame.transform.scale(pygame.image.load('assets/yellow/8.jpg'), (20, 40)),  # 8 YELLOW
-    39 : pygame.transform.scale(pygame.image.load('assets/yellow/9.jpg'), (20, 40)),  # 9 YELLOW
-    40 : pygame.transform.scale(pygame.image.load('assets/yellow/9.jpg'), (20, 40)),  # 9 YELLOW
-    41 : pygame.transform.scale(pygame.image.load('assets/blue/0.jpg'), (20, 40)),  # 0 BLUE
-    42 : pygame.transform.scale(pygame.image.load('assets/blue/0.jpg'), (20, 40)),  # 0 BLUE
-    43 : pygame.transform.scale(pygame.image.load('assets/blue/1.jpg'), (20, 40)),  # 1 BLUE
-    44 : pygame.transform.scale(pygame.image.load('assets/blue/1.jpg'), (20, 40)),  # 1 BLUE
-    45 : pygame.transform.scale(pygame.image.load('assets/blue/2.jpg'), (20, 40)),  # 2 BLUE
-    46 : pygame.transform.scale(pygame.image.load('assets/blue/2.jpg'), (20, 40)),  # 2 BLUE
-    47 : pygame.transform.scale(pygame.image.load('assets/blue/3.jpg'), (20, 40)),  # 3 BLUE
-    48 : pygame.transform.scale(pygame.image.load('assets/blue/3.jpg'), (20, 40)),  # 3 BLUE
-    49 : pygame.transform.scale(pygame.image.load('assets/blue/4.jpg'), (20, 40)),  # 4 BLUE
-    50 : pygame.transform.scale(pygame.image.load('assets/blue/4.jpg'), (20, 40)),  # 4 BLUE
-    51 : pygame.transform.scale(pygame.image.load('assets/blue/5.jpg'), (20, 40)),  # 5 BLUE
-    52 : pygame.transform.scale(pygame.image.load('assets/blue/5.jpg'), (20, 40)),  # 5 BLUE
-    53 : pygame.transform.scale(pygame.image.load('assets/blue/6.jpg'), (20, 40)),  # 6 BLUE
-    54 : pygame.transform.scale(pygame.image.load('assets/blue/6.jpg'), (20, 40)),  # 6 BLUE
-    55 : pygame.transform.scale(pygame.image.load('assets/blue/7.jpg'), (20, 40)),  # 7 BLUE
-    56 : pygame.transform.scale(pygame.image.load('assets/blue/7.jpg'), (20, 40)),  # 7 BLUE
-    57 : pygame.transform.scale(pygame.image.load('assets/blue/8.jpg'), (20, 40)),  # 8 BLUE
-    58 : pygame.transform.scale(pygame.image.load('assets/blue/8.jpg'), (20, 40)),  # 8 BLUE
-    59 : pygame.transform.scale(pygame.image.load('assets/blue/9.jpg'), (20, 40)),  # 9 BLUE
-    60 : pygame.transform.scale(pygame.image.load('assets/blue/9.jpg'), (20, 40)),  # 9 BLUE
-    61 : pygame.transform.scale(pygame.image.load('assets/green/0.jpg'), (20, 40)),  # 0 GREEN
-    62 : pygame.transform.scale(pygame.image.load('assets/green/0.jpg'), (20, 40)),  # 0 GREEN
-    63 : pygame.transform.scale(pygame.image.load('assets/green/1.jpg'), (20, 40)),  # 1 GREEN
-    64 : pygame.transform.scale(pygame.image.load('assets/green/1.jpg'), (20, 40)),  # 1 GREEN
-    65 : pygame.transform.scale(pygame.image.load('assets/green/2.jpg'), (20, 40)),  # 2 GREEN
-    66 : pygame.transform.scale(pygame.image.load('assets/green/2.jpg'), (20, 40)),  # 2 GREEN
-    67 : pygame.transform.scale(pygame.image.load('assets/green/3.jpg'), (20, 40)),  # 3 GREEN
-    68 : pygame.transform.scale(pygame.image.load('assets/green/3.jpg'), (20, 40)),  # 3 GREEN
-    69 : pygame.transform.scale(pygame.image.load('assets/green/4.jpg'), (20, 40)),  # 4 GREEN
-    70 : pygame.transform.scale(pygame.image.load('assets/green/4.jpg'), (20, 40)),  # 4 GREEN
-    71 : pygame.transform.scale(pygame.image.load('assets/green/5.jpg'), (20, 40)),  # 5 GREEN
-    72 : pygame.transform.scale(pygame.image.load('assets/green/5.jpg'), (20, 40)),  # 5 GREEN
-    73 : pygame.transform.scale(pygame.image.load('assets/green/6.jpg'), (20, 40)),  # 6 GREEN
-    74 : pygame.transform.scale(pygame.image.load('assets/green/6.jpg'), (20, 40)),  # 6 GREEN
-    75 : pygame.transform.scale(pygame.image.load('assets/green/7.jpg'), (20, 40)),  # 7 GREEN
-    76 : pygame.transform.scale(pygame.image.load('assets/green/7.jpg'), (20, 40)),  # 7 GREEN
-    77 : pygame.transform.scale(pygame.image.load('assets/green/8.jpg'), (20, 40)),  # 8 GREEN
-    78 : pygame.transform.scale(pygame.image.load('assets/green/8.jpg'), (20, 40)),  # 8 GREEN
-    79 : pygame.transform.scale(pygame.image.load('assets/green/9.jpg'), (20, 40)),  # 9 GREEN
-    80 : pygame.transform.scale(pygame.image.load('assets/green/9.jpg'), (20, 40)),  # 9 GREEN
-    81 : pygame.transform.scale(pygame.image.load('assets/red/pass.jpg'), (20, 40)),  # RED PASS
-    82 : pygame.transform.scale(pygame.image.load('assets/red/pass.jpg'), (20, 40)),  # RED PASS
-    83 : pygame.transform.scale(pygame.image.load('assets/green/pass.jpg'), (20, 40)),  # GREEN PASS
-    84 : pygame.transform.scale(pygame.image.load('assets/green/pass.jpg'), (20, 40)),  # GREEN PASS
-    85 : pygame.transform.scale(pygame.image.load('assets/yellow/pass.jpg'), (20, 40)),  # YELLOW PASS
-    86 : pygame.transform.scale(pygame.image.load('assets/yellow/pass.jpg'), (20, 40)),  # YELLOW PASS
-    87 : pygame.transform.scale(pygame.image.load('assets/blue/pass.jpg'), (20, 40)),  # BLUE PASS
-    88 : pygame.transform.scale(pygame.image.load('assets/blue/pass.jpg'), (20, 40)),  # BLUE PASS
-    89 : pygame.transform.scale(pygame.image.load('assets/red/reverse.jpg'), (20, 40)),  # RED REVERSE
-    90 : pygame.transform.scale(pygame.image.load('assets/red/reverse.jpg'), (20, 40)),  # RED REVERSE
-    91 : pygame.transform.scale(pygame.image.load('assets/green/reverse.jpg'), (20, 40)),  # GREEN REVERSE
-    92 : pygame.transform.scale(pygame.image.load('assets/green/reverse.jpg'), (20, 40)),  # GREEN REVERSE
-    93 : pygame.transform.scale(pygame.image.load('assets/blue/reverse.jpg'), (20, 40)),  # BLUE REVERSE
-    94 : pygame.transform.scale(pygame.image.load('assets/blue/reverse.jpg'), (20, 40)),  # BLUE REVERSE
-    95 : pygame.transform.scale(pygame.image.load('assets/yellow/reverse.jpg'), (20, 40)),  # YELLOW REVERSE
-    96 : pygame.transform.scale(pygame.image.load('assets/yellow/reverse.jpg'), (20, 40)),  # YELLOW REVERSE
-    97 : pygame.transform.scale(pygame.image.load('assets/red/+2.jpg'), (20, 40)),  # RED +2
-    98 : pygame.transform.scale(pygame.image.load('assets/red/+2.jpg'), (20, 40)),  # RED +2
-    99 : pygame.transform.scale(pygame.image.load('assets/green/+2.jpg'), (20, 40)),  # GREEN +2
-    100 : pygame.transform.scale(pygame.image.load('assets/green/+2.jpg'), (20, 40)), # GREEN +2
-    101 : pygame.transform.scale(pygame.image.load('assets/yellow/+2.jpg'), (20, 40)), # YELLOW +2
-    102 : pygame.transform.scale(pygame.image.load('assets/yellow/+2.jpg'), (20, 40)), # YELLOW +2
-    103 : pygame.transform.scale(pygame.image.load('assets/blue/+2.jpg'), (20, 40)), # BLUE +2
-    104 : pygame.transform.scale(pygame.image.load('assets/blue/+2.jpg'), (20, 40)), # BLUE +2
-    105 : pygame.transform.scale(pygame.image.load('assets/color_change/color_change.jpg'), (20, 40)), # COLOR CHANGE
-    106 : pygame.transform.scale(pygame.image.load('assets/color_change/color_change.jpg'), (20, 40)), # COLOR CHANGE
-    107 : pygame.transform.scale(pygame.image.load('assets/color_change/color_change.jpg'), (20, 40)), # COLOR CHANGE
-    108 : pygame.transform.scale(pygame.image.load('assets/color_change/color_change.jpg'), (20, 40)), # COLOR CHANGE
-    109 : pygame.transform.scale(pygame.image.load('assets/color_change/+4.jpg'), (20, 40)), # COLOR CHANGE +4
-    110 : pygame.transform.scale(pygame.image.load('assets/color_change/+4.jpg'), (20, 40)), # COLOR CHANGE +4
-    111 : pygame.transform.scale(pygame.image.load('assets/color_change/+4.jpg'), (20, 40)), # COLOR CHANGE +4
-    112 : pygame.transform.scale(pygame.image.load('assets/color_change/+4.jpg'), (20, 40))  # COLOR CHANGE +4
+    1 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\0.jpg')), (40, 80)),   # 0 RED
+    2 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\0.jpg')), (40, 80)),   # 0 RED
+    3 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\1.jpg')), (40, 80)),   # 1 RED
+    4 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\1.jpg')), (40, 80)),   # 1 RED
+    5 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\2.jpg')), (40, 80)),   # 2 RED
+    6 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\2.jpg')), (40, 80)),   # 2 RED
+    7 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\3.jpg')), (40, 80)),   # 3 RED
+    8 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\3.jpg')), (40, 80)),   # 3 RED
+    9 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\4.jpg')), (40, 80)),   # 4 RED
+    10 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\4.jpg')), (40, 80)),  # 4 RED
+    11 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\5.jpg')), (40, 80)),  # 5 RED
+    12 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\5.jpg')), (40, 80)),  # 5 RED
+    13 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\6.jpg')), (40, 80)),  # 6 RED
+    14 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\6.jpg')), (40, 80)),  # 6 RED
+    15 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\7.jpg')), (40, 80)),  # 7 RED
+    16 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\7.jpg')), (40, 80)),  # 7 RED
+    17 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\8.jpg')), (40, 80)),  # 8 RED
+    18 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\8.jpg')), (40, 80)),  # 8 RED
+    19 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\9.jpg')), (40, 80)),  # 9 RED
+    20 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\9.jpg')), (40, 80)),  # 9 RED
+    21 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\0.jpg')), (40, 80)),  # 0 YELLOW
+    22 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\0.jpg')), (40, 80)),  # 0 YELLOW
+    23 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\1.jpg')), (40, 80)),  # 1 YELLOW
+    24 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\1.jpg')), (40, 80)),  # 1 YELLOW
+    25 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\2.jpg')), (40, 80)),  # 2 YELLOW
+    26 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\2.jpg')), (40, 80)),  # 2 YELLOW
+    27 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\3.jpg')), (40, 80)),  # 3 YELLOW
+    28 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\3.jpg')), (40, 80)),  # 3 YELLOW
+    29 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\4.jpg')), (40, 80)),  # 4 YELLOW
+    30 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\4.jpg')), (40, 80)),  # 4 YELLOW
+    31 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\5.jpg')), (40, 80)),  # 5 YELLOW
+    32 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\5.jpg')), (40, 80)),  # 5 YELLOW
+    33 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\6.jpg')), (40, 80)),  # 6 YELLOW
+    34 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\6.jpg')), (40, 80)),  # 6 YELLOW
+    35 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\7.jpg')), (40, 80)),  # 7 YELLOW
+    36 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\7.jpg')), (40, 80)),  # 7 YELLOW
+    37 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\8.jpg')), (40, 80)),  # 8 YELLOW
+    38 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\8.jpg')), (40, 80)),  # 8 YELLOW
+    39 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\9.jpg')), (40, 80)),  # 9 YELLOW
+    40 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\9.jpg')), (40, 80)),  # 9 YELLOW
+    41 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\0.jpg')), (40, 80)),  # 0 BLUE
+    42 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\0.jpg')), (40, 80)),  # 0 BLUE
+    43 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\1.jpg')), (40, 80)),  # 1 BLUE
+    44 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\1.jpg')), (40, 80)),  # 1 BLUE
+    45 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\2.jpg')), (40, 80)),  # 2 BLUE
+    46 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\2.jpg')), (40, 80)),  # 2 BLUE
+    47 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\3.jpg')), (40, 80)),  # 3 BLUE
+    48 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\3.jpg')), (40, 80)),  # 3 BLUE
+    49 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\4.jpg')), (40, 80)),  # 4 BLUE
+    50 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\4.jpg')), (40, 80)),  # 4 BLUE
+    51 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\5.jpg')), (40, 80)),  # 5 BLUE
+    52 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\5.jpg')), (40, 80)),  # 5 BLUE
+    53 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\6.jpg')), (40, 80)),  # 6 BLUE
+    54 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\6.jpg')), (40, 80)),  # 6 BLUE
+    55 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\7.jpg')), (40, 80)),  # 7 BLUE
+    56 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\7.jpg')), (40, 80)),  # 7 BLUE
+    57 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\8.jpg')), (40, 80)),  # 8 BLUE
+    58 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\8.jpg')), (40, 80)),  # 8 BLUE
+    59 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\9.jpg')), (40, 80)),  # 9 BLUE
+    60 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\9.jpg')), (40, 80)),  # 9 BLUE
+    61 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\0.jpg')), (40, 80)),  # 0 GREEN
+    62 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\0.jpg')), (40, 80)),  # 0 GREEN
+    63 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\1.jpg')), (40, 80)),  # 1 GREEN
+    64 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\1.jpg')), (40, 80)),  # 1 GREEN
+    65 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\2.jpg')), (40, 80)),  # 2 GREEN
+    66 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\2.jpg')), (40, 80)),  # 2 GREEN
+    67 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\3.jpg')), (40, 80)),  # 3 GREEN
+    68 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\3.jpg')), (40, 80)),  # 3 GREEN
+    69 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\4.jpg')), (40, 80)),  # 4 GREEN
+    70 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\4.jpg')), (40, 80)),  # 4 GREEN
+    71 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\5.jpg')), (40, 80)),  # 5 GREEN
+    72 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\5.jpg')), (40, 80)),  # 5 GREEN
+    73 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\6.jpg')), (40, 80)),  # 6 GREEN
+    74 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\6.jpg')), (40, 80)),  # 6 GREEN
+    75 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\7.jpg')), (40, 80)),  # 7 GREEN
+    76 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\7.jpg')), (40, 80)),  # 7 GREEN
+    77 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\8.jpg')), (40, 80)),  # 8 GREEN
+    78 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\8.jpg')), (40, 80)),  # 8 GREEN
+    79 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\9.jpg')), (40, 80)),  # 9 GREEN
+    80 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\9.jpg')), (40, 80)),  # 9 GREEN
+    81 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\pass.jpg')), (40, 80)),  # RED PASS
+    82 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\pass.jpg')), (40, 80)),  # RED PASS
+    83 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\pass.jpg')), (40, 80)),  # GREEN PASS
+    84 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\pass.jpg')), (40, 80)),  # GREEN PASS
+    85 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\pass.jpg')), (40, 80)),  # YELLOW PASS
+    86 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\pass.jpg')), (40, 80)),  # YELLOW PASS
+    87 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\pass.jpg')), (40, 80)),  # BLUE PASS
+    88 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\pass.jpg')), (40, 80)),  # BLUE PASS
+    89 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\reverse.jpg')), (40, 80)),  # RED REVERSE
+    90 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\reverse.jpg')), (40, 80)),  # RED REVERSE
+    91 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\reverse.jpg')), (40, 80)),  # GREEN REVERSE
+    92 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\reverse.jpg')), (40, 80)),  # GREEN REVERSE
+    93 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\reverse.jpg')), (40, 80)),  # BLUE REVERSE
+    94 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\reverse.jpg')), (40, 80)),  # BLUE REVERSE
+    95 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\reverse.jpg')), (40, 80)),  # YELLOW REVERSE
+    96 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\reverse.jpg')), (40, 80)),  # YELLOW REVERSE
+    97 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\+2.jpg')), (40, 80)),  # RED +2
+    98 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\red\\+2.jpg')), (40, 80)),  # RED +2
+    99 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\+2.jpg')), (40, 80)),  # GREEN +2
+    100 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\green\\+2.jpg')), (40, 80)), # GREEN +2
+    101 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\+2.jpg')), (40, 80)), # YELLOW +2
+    102 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\yellow\\+2.jpg')), (40, 80)), # YELLOW +2
+    103 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\+2.jpg')), (40, 80)), # BLUE +2
+    104 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\blue\\+2.jpg')), (40, 80)), # BLUE +2
+    105 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\color_change\\color_change.jpg')), (40, 80)), # COLOR CHANGE
+    106 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\color_change\\color_change.jpg')), (40, 80)), # COLOR CHANGE
+    107 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\color_change\\color_change.jpg')), (40, 80)), # COLOR CHANGE
+    108 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\color_change\\color_change.jpg')), (40, 80)), # COLOR CHANGE
+    109 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\color_change\\+4.jpg')), (40, 80)), # COLOR CHANGE +4
+    110 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\color_change\\+4.jpg')), (40, 80)), # COLOR CHANGE +4
+    111 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\color_change\\+4.jpg')), (40, 80)), # COLOR CHANGE +4
+    112 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\color_change\\+4.jpg')), (40, 80))  # COLOR CHANGE +4
 }
+
+back_side = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (60, 120))
+screen.blit(back_side, (420, 200))
 
 def colour(card):
         if (card >= 1 and card <= 20) or card == 81 or card == 82 or card == 89 or card == 90 or card == 97 or card == 98:
@@ -233,6 +249,11 @@ class Player:
 players_list = [Player(i+1) for i in range(10)]
 
 while True:
+    texto = font.render(f"Partida: {partida-1}", True, (0, 0, 0))
+    screen.blit(texto, (10, 10))
+    texto = font.render(f"Partida: {partida}", True, (255, 255, 255))
+    screen.blit(texto, (10, 10))
+
     players = random.randint(2, 10)
     unsafled_cards = []
     for i in range(1, 112+1):
@@ -268,6 +289,10 @@ while True:
     finished = False
 
     while finished == False:
+        if last_card != -1:
+            lc = pygame.transform.scale(cards[last_card], (60, 120))
+        screen.blit(lc, (420, 400))
+        pygame.display.flip()
         que_no_pete_al_clicar_fuera()
 
         if next_player < 0:
@@ -314,6 +339,9 @@ while True:
             if posible_cards != []:
                 chosed = False
                 while True:
+                    if last_card != -1:
+                        lc = pygame.transform.scale(cards[last_card], (60, 120))
+                    screen.blit(lc, (420, 400))
                     chosed_card = players_list[next_player].choose(posible_cards, last_card, last_card_colour, used_cards, plus2round, plus4round, players_list[next_player].played)
                     
                     print("\nCHOSED CARD:", chosed_card)
@@ -358,17 +386,13 @@ while True:
                             if colors != []:
                                 last_card_colour = max(colors)
                             
-                            last_card = int(-1) # esto lo deberia utilizar para indicar que se puede utiliar cualquier carta 
-                            
                         elif last_card >= 109 and last_card <= 112: # +4 & color change
                             plus4round += 1
                             
                             colors = []
                             for i in players_list[next_player].cards:
                                 colors.append(colour(i))
-                            last_card_colour = max(colors)
-                            
-                            last_card = int(-1) # esto lo deberia utilizar para indicar que se puede utiliar cualquier carta    
+                            last_card_colour = max(colors) 
                         
                         if plus2round > 0:
                             if last_card >= 97 and last_card <= 104:
