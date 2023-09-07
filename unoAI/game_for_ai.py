@@ -142,7 +142,6 @@ cards = {
     112 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\color_change\\+4.jpg')), (40, 80))  # COLOR CHANGE +4
 }
 
-
 tamaño_cartas_jugadores = (40, 80)
 
 def colour(card):
@@ -263,9 +262,9 @@ players_place_holders = {
     9 : (850, 410)
 }
 
-def show_cards(player):
+def show_cards(player, last_card):
     if player%2 == 0:
-        for i in range(15):
+        for i in range(25):
             x = players_place_holders[player][0] - 5 + (i * 20)
             y = players_place_holders[player][1] - 5
             pygame.draw.rect(screen, (0, 0, 0), (x, y, 50, 90))
@@ -276,7 +275,7 @@ def show_cards(player):
             back_side = pygame.transform.scale(cards[players_list[player].cards[i]], (40, 80))
             screen.blit(back_side, (x, y))
     else:
-        for i in range(15):
+        for i in range(25):
             x = players_place_holders[player][0] - 5 - (i * 20)
             y = players_place_holders[player][1] - 5
             pygame.draw.rect(screen, (0, 0, 0), (x, y, 50, 90))
@@ -286,6 +285,12 @@ def show_cards(player):
             y = players_place_holders[player][1]
             back_side = pygame.transform.scale(cards[players_list[player].cards[i]], (40, 80))
             screen.blit(back_side, (x, y))
+
+    if last_card != -1:
+        lc = pygame.transform.scale(cards[last_card], (60, 120))
+    screen.blit(lc, (420, 300))
+    back_side = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (60, 120))
+    screen.blit(back_side, (420, 100))
 
 while True:
     texto = font.render(f"Partida: {partida-1}", True, (0, 0, 0))
@@ -307,6 +312,7 @@ while True:
             players_list[i].cards.append(card)
             unsafled_cards.remove(card)
             used_cards.append(card)
+        show_cards(i, 1)
 
     for i in range(players):
         print("\nPlayer:", players_list[i].player_id)
@@ -449,7 +455,7 @@ while True:
                         
                         break
 
-                show_cards(next_player)
+                show_cards(next_player, last_card)
             
             else:
                 print(f"Player {next_player}:    PASS")
@@ -465,6 +471,7 @@ while True:
                 for i in players_list:
                     i.played = False
                 partida += 1
+                show_cards(next_player, last_card)
                 time.sleep(3)
 
         if player_move_foward:
