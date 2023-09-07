@@ -6,7 +6,6 @@
 #
 #####################################################
 
-
 import random
 import pygame
 import sys
@@ -143,49 +142,8 @@ cards = {
     112 : pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\color_change\\+4.jpg')), (40, 80))  # COLOR CHANGE +4
 }
 
-back_side = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (60, 120))
-screen.blit(back_side, (420, 100))
 
-place_holder_p1 = (10, 50)
-place_holder_p2 = (10, 140)
-place_holder_p3 = (10, 230)
-place_holder_p4 = (10, 320)
-place_holder_p5 = (10, 0)
-place_holder_p6 = (850, 50)
-place_holder_p7 = (850, 140)
-place_holder_p8 = (850, 230)
-place_holder_p9 = (850, 320)
-place_holder_p10 = (850, 0)
-
-place_holder_test = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (40, 80))
-screen.blit(place_holder_test, (10, 50))
-
-place_holder_test = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (40, 80))
-screen.blit(place_holder_test, (10, 140))
-
-place_holder_test = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (40, 80))
-screen.blit(place_holder_test, (10, 230))
-
-place_holder_test = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (40, 80))
-screen.blit(place_holder_test, (10, 320))
-
-place_holder_test = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (40, 80))
-screen.blit(place_holder_test, (10, 410))
-
-place_holder_test = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (40, 80))
-screen.blit(place_holder_test, (850, 50))
-
-place_holder_test = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (40, 80))
-screen.blit(place_holder_test, (850, 140))
-
-place_holder_test = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (40, 80))
-screen.blit(place_holder_test, (850, 230))
-
-place_holder_test = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (40, 80))
-screen.blit(place_holder_test, (850, 320))
-
-place_holder_test = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (40, 80))
-screen.blit(place_holder_test, (850, 410))
+tamaño_cartas_jugadores = (40, 80)
 
 def colour(card):
         if (card >= 1 and card <= 20) or card == 81 or card == 82 or card == 89 or card == 90 or card == 97 or card == 98:
@@ -288,6 +246,46 @@ class Player:
         return posible_cards[prediction.index(max(prediction))]
     
 players_list = [Player(i+1) for i in range(10)]
+
+back_side = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (60, 120))
+screen.blit(back_side, (420, 100))
+
+players_place_holders = {
+    0 : (10, 50),
+    1 : (850, 50),
+    2 : (10, 140),
+    3 : (850, 140),
+    4 : (10, 230),
+    5 : (850, 230),
+    6 : (10, 320),
+    7 : (850, 320),
+    8 : (10, 410),
+    9 : (850, 410)
+}
+
+def show_cards(player):
+    if player%2 == 0:
+        for i in range(15):
+            x = players_place_holders[player][0] - 5 + (i * 20)
+            y = players_place_holders[player][1] - 5
+            pygame.draw.rect(screen, (0, 0, 0), (x, y, 50, 90))
+
+        for i in range(len(players_list[player].cards)):
+            x = players_place_holders[player][0] + (i * 20)
+            y = players_place_holders[player][1]
+            back_side = pygame.transform.scale(cards[players_list[player].cards[i]], (40, 80))
+            screen.blit(back_side, (x, y))
+    else:
+        for i in range(15):
+            x = players_place_holders[player][0] - 5 - (i * 20)
+            y = players_place_holders[player][1] - 5
+            pygame.draw.rect(screen, (0, 0, 0), (x, y, 50, 90))
+
+        for i in range(len(players_list[player].cards)):
+            x = players_place_holders[player][0] - (i * 20)
+            y = players_place_holders[player][1]
+            back_side = pygame.transform.scale(cards[players_list[player].cards[i]], (40, 80))
+            screen.blit(back_side, (x, y))
 
 while True:
     texto = font.render(f"Partida: {partida-1}", True, (0, 0, 0))
@@ -432,8 +430,14 @@ while True:
                             
                             colors = []
                             for i in players_list[next_player].cards:
-                                colors.append(colour(i))
-                            last_card_colour = max(colors) 
+                                try: # sin este try ni el siguiente peta si hay cambio de color, porque no es un color especifico
+                                    colors.append(colour(i))
+                                except:
+                                    pass
+                            try:
+                                last_card_colour = max(colors)
+                            except:
+                                pass 
                         
                         if plus2round > 0:
                             if last_card >= 97 and last_card <= 104:
@@ -444,6 +448,8 @@ while True:
                                 plus4round += 1
                         
                         break
+
+                show_cards(next_player)
             
             else:
                 print(f"Player {next_player}:    PASS")
