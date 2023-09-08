@@ -289,29 +289,34 @@ def show_cards(player, last_card):
     screen.blit(back_side, (420, 100))
     pygame.display.flip()
 
-animation_speed = 1
+animation_speed = 7
 
-def move_new_card(player):
-    new_card = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (60, 120))
-    screen.blit(back_side, (420, 100))
+def move_new_card(player, last_card):
+    new_card_1 = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (60, 120))
+    
+    x_diff = players_place_holders[player][0] - 420
+    y_diff = players_place_holders[player][1] - 100
 
-    x = 420 - players_place_holders[player][0]
-    if x > 0:
-        x = 0 - x + 20
-    else:
-        x = 0 + x - 20
+    total_steps = int(abs(x_diff) / animation_speed)
 
-    y = 100 - players_place_holders[player][1]
+    for i in range(total_steps):
+        x_step = (x_diff / total_steps) * i
+        y_step = (y_diff / total_steps) * i
 
-    for i in range(int(x / animation_speed)):
-        x2 = x * i * animation_speed
-        y2 = y * i * animation_speed
+        x2 = 420 + x_step
+        y2 = 100 + y_step
 
-        screen.blit(new_card, (420, 100))
-        screen.blit(lc, (x2, y2))
+        screen.blit(new_card_1, (x2, y2))
 
         pygame.display.flip()
-        pygame.time.Clock().tick(60) 
+        pygame.time.Clock().tick(800)
+
+        pygame.draw.rect(screen, (0, 0, 0), (x2, y2, 60, 120))
+        back_side = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (60, 120))
+        screen.blit(back_side, (420, 100))
+
+    for i in range(10):
+        show_cards(i, last_card)
 
 while True:
     for i in range(10):
@@ -378,11 +383,12 @@ while True:
                         
                 if posible_cards == []:
                     for i in range(2):
-                        if unsafled_cards != [] :
+                        if unsafled_cards != []:
                             card = int(random.choice(unsafled_cards))
                             players_list[next_player].cards.append(card)
                             unsafled_cards.remove(card)
                             used_cards.append(card)
+                            move_new_card(next_player, last_card)
                 
             elif last_card >= 109 and last_card <= 112: # +4
                 for i in players_list[next_player].cards:
@@ -396,6 +402,7 @@ while True:
                             players_list[next_player].cards.append(card)
                             unsafled_cards.remove(card)
                             used_cards.append(card)
+                            move_new_card(next_player, last_card)
 
             print("[!] Player:", next_player)
             print("[!] player_cards:", players_list[next_player].cards)
@@ -479,6 +486,7 @@ while True:
                 players_list[next_player].cards.append(card)
                 unsafled_cards.remove(card)
                 used_cards.append(card)
+                move_new_card(next_player, last_card)
             
         if players_list[next_player].cards == []:
             print(f"Player {next_player}:    Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
