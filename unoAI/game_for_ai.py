@@ -2,8 +2,6 @@
 #
 #   Al ejecutar el script que de dos opciones, cargar modelo o correr desde 0
 #
-#   Hacer otro script optimizado y sin UI y que cada x partidas (por ejemplo 10) exporte el modelo
-#
 #####################################################
 
 import random
@@ -212,7 +210,7 @@ class Player:
 
                     self.network.add(keras.layers.Dense(2, activation='softmax')) # capa de salida placeholder
 
-            played = True
+            self.played = True
         
         self.network.pop()
         self.network.add(keras.layers.Dense(len(posible_cards), activation='softmax')) # y esta es la capa de salida que se actualiza al numero de cartas que se pueden jugar
@@ -241,7 +239,6 @@ class Player:
         # +2 & +4
         input_neurons[226], input_neurons[227] = plus2, plus4
         prediction = list(self.network.predict(np.array([input_neurons], dtype=int)))
-        print("pid:", self.player_id, "pred:", prediction, "cards:", self.cards)
         return posible_cards[prediction.index(max(prediction))]
     
 players_list = [Player(i+1) for i in range(10)]
@@ -286,13 +283,39 @@ def show_cards(player, last_card):
             back_side = pygame.transform.scale(cards[players_list[player].cards[i]], (40, 80))
             screen.blit(back_side, (x, y))
 
-    if last_card != -1:
-        lc = pygame.transform.scale(cards[last_card], (60, 120))
+    lc = pygame.transform.scale(cards[last_card], (60, 120))
     screen.blit(lc, (420, 300))
     back_side = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (60, 120))
     screen.blit(back_side, (420, 100))
+    pygame.display.flip()
+
+animation_speed = 1
+
+def move_new_card(player):
+    new_card = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (60, 120))
+    screen.blit(back_side, (420, 100))
+
+    x = 420 - players_place_holders[player][0]
+    if x > 0:
+        x = 0 - x + 20
+    else:
+        x = 0 + x - 20
+
+    y = 100 - players_place_holders[player][1]
+
+    for i in range(int(x / animation_speed)):
+        x2 = x * i * animation_speed
+        y2 = y * i * animation_speed
+
+        screen.blit(new_card, (420, 100))
+        screen.blit(lc, (x2, y2))
+
+        pygame.display.flip()
+        pygame.time.Clock().tick(60) 
 
 while True:
+    for i in range(10):
+        players_list[i].cards = []
     texto = font.render(f"Partida: {partida-1}", True, (0, 0, 0))
     screen.blit(texto, (10, 10))
     texto = font.render(f"Partida: {partida}", True, (255, 255, 255))
@@ -312,11 +335,9 @@ while True:
             players_list[i].cards.append(card)
             unsafled_cards.remove(card)
             used_cards.append(card)
+        
+    for i in range(10):
         show_cards(i, 1)
-
-    for i in range(players):
-        print("\nPlayer:", players_list[i].player_id)
-        print(players_list[i].cards)
 
     init_card = random.choice(unsafled_cards)
     used_cards.append(init_card)
@@ -334,10 +355,8 @@ while True:
     finished = False
 
     while finished == False:
-        if last_card != -1:
-            lc = pygame.transform.scale(cards[last_card], (60, 120))
+        lc = pygame.transform.scale(cards[last_card], (60, 120))
         screen.blit(lc, (420, 300))
-        pygame.display.flip()
         que_no_pete_al_clicar_fuera()
 
         if next_player < 0:
@@ -378,14 +397,12 @@ while True:
                             unsafled_cards.remove(card)
                             used_cards.append(card)
 
-            print("[!] pos cards:", posible_cards)
+            print("[!] Player:", next_player)
             print("[!] player_cards:", players_list[next_player].cards)
 
             if posible_cards != []:
-                chosed = False
                 while True:
-                    if last_card != -1:
-                        lc = pygame.transform.scale(cards[last_card], (60, 120))
+                    lc = pygame.transform.scale(cards[last_card], (60, 120))
                     screen.blit(lc, (420, 300))
                     chosed_card = players_list[next_player].choose(posible_cards, last_card, last_card_colour, used_cards, plus2round, plus4round, players_list[next_player].played)
                     
@@ -452,10 +469,9 @@ while True:
                         if plus4round > 0:
                             if last_card >= 109 and last_card <= 112:
                                 plus4round += 1
-                        
-                        break
 
-                show_cards(next_player, last_card)
+                        show_cards(next_player, last_card)
+                        break
             
             else:
                 print(f"Player {next_player}:    PASS")
@@ -464,15 +480,15 @@ while True:
                 unsafled_cards.remove(card)
                 used_cards.append(card)
             
-            if players_list[next_player].cards == []:
-                print(f"Player {next_player}:    Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
-                finished = True
-                winner_network = players_list[next_player].network
-                for i in players_list:
-                    i.played = False
-                partida += 1
-                show_cards(next_player, last_card)
-                time.sleep(3)
+        if players_list[next_player].cards == []:
+            print(f"Player {next_player}:    Winner!")   ################# Y ESTA RED SERA LA QUE SE UTILIZARA EN EL ALGORITMO EVOLUTIVO
+            show_cards(next_player, last_card)
+            finished = True
+            winner_network = players_list[next_player].network
+            for i in players_list:
+                i.played = False
+            partida += 1
+            time.sleep(5)
 
         if player_move_foward:
             next_player += 1
@@ -488,6 +504,3 @@ while True:
             for i in used_cards:
                 unsafled_cards.append(i)
                 used_cards.remove(i)
-                
-        print("Last card:", last_card, "Player:", next_player)
-        print("[-] cards:", players_list[next_player].cards)
