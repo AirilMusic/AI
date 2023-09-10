@@ -1,19 +1,52 @@
-##################### TO DO LIST ####################
-#
-#   Al ejecutar el script que de dos opciones, cargar modelo o correr desde 0
-#
-#####################################################
-
 import random
 import pygame
 import sys
 import os
-import tensorflow as tf
 from tensorflow import keras
 import numpy as np
 import time
+import tkinter as tk
+from tkinter import ttk
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
+
+loaded_network = None
+
+def load_network(filename, window):
+    save_path = os.path.join(script_dir, 'networks')
+    
+    loaded_network = keras.models.load_model(os.path.join(save_path, filename))
+    print("[+] Loaded network")
+    window.destroy()
+
+def show_networks():
+    root.destroy()
+    window = tk.Tk()
+    window.title("Select Network")
+    window.geometry("200x200")
+
+    for folder in folders:
+        btn = ttk.Button(window, text=folder, command=lambda f=folder: load_network(f, window))
+        btn.pack(pady=5)
+
+def start_training():
+    root.destroy()
+        
+root = tk.Tk()
+root.title("Select Option")
+root.geometry("200x100")
+
+networks_dir = os.path.join(script_dir, 'networks')
+folders = [folder for folder in os.listdir(networks_dir) if os.path.isdir(os.path.join(networks_dir, folder))]
+
+
+btn_load_network = ttk.Button(root, text="Load Network", command=show_networks)
+btn_load_network.pack(pady=10)
+
+btn_start_training = ttk.Button(root, text="Start Training", command=start_training)
+btn_start_training.pack(pady=5)
+
+root.mainloop()
 
 pygame.init()
 size = (900, 530)
@@ -184,31 +217,34 @@ class Player:
     
     def choose(self, posible_cards, last_card, colour, used_cards, plus2, plus4, played):
         if partida == 1 and self.played == False:
-            self.network = first_network()
-            self.played = True
-        
+            if loaded_network == None:
+                self.network = first_network()
+                self.played = True
+            else:
+                self.network = loaded_network
+                    
         elif played == False: # copia la red ganadora pero les hace modificaciones
             self.network = winner_network
             
-            if self.player_id != 1: # la primera red la deja como la ganadora, las demas tienen una probabilidad de mutar
-                for layer in self.network.layers:
-                    if hasattr(layer, 'kernel_initializer') and random.randint(1, 10) == 1: # 10% de probabilidades de que una capa cambie sus pesos
-                        weights = layer.get_weights()
-                        weights = [np.random.random_sample(w.shape) for w in weights]
-                        layer.set_weights(weights)
-                
-                if random.randint(1, 10) == 1: # 10% de probabilidades de que se le quiten capas
-                    n_layers = len(self.network.layers)
-                    for i in range(random.randint(1, int(n_layers/2))):
-                        self.network.pop()
+        if self.player_id != 1: # la primera red la deja como la ganadora, las demas tienen una probabilidad de mutar
+            for layer in self.network.layers:
+                if hasattr(layer, 'kernel_initializer') and random.randint(1, 10) == 1: # 10% de probabilidades de que una capa cambie sus pesos
+                    weights = layer.get_weights()
+                    weights = [np.random.random_sample(w.shape) for w in weights]
+                    layer.set_weights(weights)
+            
+            if random.randint(1, 10) == 1: # 10% de probabilidades de que se le quiten capas
+                n_layers = len(self.network.layers)
+                for i in range(random.randint(1, int(n_layers/2))):
+                    self.network.pop()
 
-                if random.randint(1, 10) == 1: # 10% de probabilidades de que se le añadadan capas nuevas
-                    self.network.pop() # se le quita la capa de salida
+            if random.randint(1, 10) == 1: # 10% de probabilidades de que se le añadadan capas nuevas
+                self.network.pop() # se le quita la capa de salida
 
-                    for i in range(1, random.randint(1, 100)):
-                        self.network.add(keras.layers.Dense(random.randint(1, 1000), activation='relu'))
+                for i in range(1, random.randint(1, 100)):
+                    self.network.add(keras.layers.Dense(random.randint(1, 1000), activation='relu'))
 
-                    self.network.add(keras.layers.Dense(2, activation='softmax')) # capa de salida placeholder
+                self.network.add(keras.layers.Dense(2, activation='softmax')) # capa de salida placeholder
 
             self.played = True
         
