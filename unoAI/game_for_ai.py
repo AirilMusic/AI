@@ -289,7 +289,7 @@ def show_cards(player, last_card):
     screen.blit(back_side, (420, 100))
     pygame.display.flip()
 
-animation_speed = 7
+animation_speed = 8
 
 def move_new_card(player, last_card):
     new_card_1 = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (60, 120))
@@ -318,6 +318,46 @@ def move_new_card(player, last_card):
     for i in range(10):
         show_cards(i, last_card)
 
+def move_player_card(player, card, last_card):
+    new_card_1 = pygame.transform.scale(cards[card], (60, 120))
+    
+    x_diff = players_place_holders[player][0] - 420
+    if x_diff > 0:
+        x_diff = 0 - x_diff
+    else:
+        x_diff = abs(x_diff)
+    y_diff = players_place_holders[player][1] - 300
+    if y_diff > 0:
+        y_diff = 0 - y_diff
+    else:
+        y_diff = abs(y_diff)
+
+    total_steps = int(abs(x_diff) / animation_speed)
+
+    for i in range(total_steps):
+        x_step = (x_diff / total_steps) * i
+        y_step = (y_diff / total_steps) * i
+
+        x2 = players_place_holders[player][0] + x_step
+        y2 = players_place_holders[player][1] + y_step
+
+        screen.blit(new_card_1, (x2, y2))
+
+        pygame.display.flip()
+        pygame.time.Clock().tick(800)
+
+        pygame.draw.rect(screen, (240, 240, 240), (x2, y2, 60, 120))
+        back_side = pygame.transform.scale(pygame.image.load(os.path.join(script_dir,'assets\\back.PNG')), (60, 120))
+        screen.blit(back_side, (420, 100))
+
+    screen.fill((0,0,0))
+
+    texto = font.render(f"Partida: {partida}", True, (255, 255, 255))
+    screen.blit(texto, (10, 10))   
+
+    for i in range(10):
+        show_cards(i, last_card)
+
 while True:
     for i in range(10):
         players_list[i].cards = []
@@ -333,26 +373,30 @@ while True:
     used_cards = []
     tota_cards = 112 #esto no hay que cambiarlo, es por si necesito saber cuanto es el total y no tener que hacer len(), para reducir el numero de operaciones
 
+    init_card = random.choice(unsafled_cards)
+    used_cards.append(init_card)
+    unsafled_cards.remove(init_card)
+
+    last_card = init_card
+    last_card_colour = colour(last_card)
+
     for i in range(players):
         players_list[i].playing = True
+        animation_speed += 12
         for a in range(7):
             card = int(random.choice(unsafled_cards))
             players_list[i].cards.append(card)
             unsafled_cards.remove(card)
             used_cards.append(card)
+            move_new_card(i, last_card)
+            show_cards(i, last_card)
+        animation_speed -= 12
         
     for i in range(10):
-        show_cards(i, 1)
-
-    init_card = random.choice(unsafled_cards)
-    used_cards.append(init_card)
-    unsafled_cards.remove(init_card)
+        show_cards(i, last_card)
 
     plus2round = 0
     plus4round = 0
-
-    last_card = init_card
-    last_card_colour = colour(last_card)
 
     next_player = 0
     player_move_foward = True # si es false es porque al haber cambio de sentido va para a tras
@@ -389,6 +433,8 @@ while True:
                             unsafled_cards.remove(card)
                             used_cards.append(card)
                             move_new_card(next_player, last_card)
+                            show_cards(next_player, card)
+                continue
                 
             elif last_card >= 109 and last_card <= 112: # +4
                 for i in players_list[next_player].cards:
@@ -403,6 +449,8 @@ while True:
                             unsafled_cards.remove(card)
                             used_cards.append(card)
                             move_new_card(next_player, last_card)
+                            show_cards(next_player, card)
+                continue
 
             print("[!] Player:", next_player)
             print("[!] player_cards:", players_list[next_player].cards)
@@ -422,11 +470,12 @@ while True:
                     used_cards.append(chosed_card)
                     posible_cards.remove(chosed_card)
                     players_list[next_player].cards.remove(chosed_card)
-                    
-                    last_card = chosed_card
-                    last_card_colour = colour(last_card)
 
                     if posible_cards == []:
+                        move_player_card(next_player, chosed_card, last_card)
+                        last_card = chosed_card
+                        last_card_colour = colour(last_card)
+
                         if last_card >= 81 and last_card <= 88: # SALTO
                             if player_move_foward:
                                 next_player += 1
@@ -479,6 +528,10 @@ while True:
 
                         show_cards(next_player, last_card)
                         break
+                    else:
+                        move_player_card(next_player, chosed_card, last_card)
+                        last_card = chosed_card
+                        last_card_colour = colour(last_card)
             
             else:
                 print(f"Player {next_player}:    PASS")
@@ -496,7 +549,7 @@ while True:
             for i in players_list:
                 i.played = False
             partida += 1
-            time.sleep(5)
+            time.sleep(3)
 
         if player_move_foward:
             next_player += 1
