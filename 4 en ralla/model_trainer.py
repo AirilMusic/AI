@@ -44,26 +44,29 @@ def place_a_tile(tablero, column, player):
     
     return tablero
 
-def check_cuatrejo_en_rallejo(board, player):
+def check_cuatrejo_en_rallejo(board, player, last_column):
     rallitas, columnitas = len(board), len(board[0])
 
-    for row in range(rallitas): # ladajo
-        for col in range(columnitas - 3):
+    # ladajo
+    for row in range(rallitas):
+        for col in range(max(0, last_column - 3), min(columnitas - 3, last_column + 1)):
             if all(board[row][col + i] == player for i in range(4)):
                 return True
 
-    for col in range(columnitas): # arribajo
-        for row in range(rallitas - 3):
-            if all(board[row + i][col] == player for i in range(4)):
-                return True
+    # arribajo
+    for row in range(rallitas - 3):
+        if all(board[row + i][last_column] == player for i in range(4)):
+            return True
 
-    for row in range(3, rallitas): # diagonal bajorriba
-        for col in range(columnitas - 3):
+    # diagonal bajorriba
+    for row in range(3, rallitas):
+        for col in range(max(0, last_column - 3), min(columnitas - 3, last_column + 1)):
             if all(board[row - i][col + i] == player for i in range(4)):
                 return True
 
-    for row in range(rallitas - 3): # diagonal arribajo
-        for col in range(columnitas - 3):
+    # diagonal arribajo
+    for row in range(rallitas - 3):
+        for col in range(max(0, last_column - 3), min(columnitas - 3, last_column + 1)):
             if all(board[row + i][col + i] == player for i in range(4)):
                 return True
 
@@ -84,6 +87,7 @@ while True:
         if movimiento > 6: # ckeckea si hay 4 en ralla (los primeros 6 movimientos no porque es imposible y asi es un poquito mas eficiente)
             if check_cuatrejo_en_rallejo(board, player):
                 print("Ganador: " + player)
+                partida += 1
                 break
         
         movimiento += 1
