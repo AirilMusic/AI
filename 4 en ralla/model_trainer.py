@@ -75,13 +75,15 @@ while True:
     movimiento = 1
     board = tablero_base.copy()
 
-    while True: # comienza la partida, ave cesar, gallina tu madre
+    while True: # comienza la partida: ave cesar, gallina tu madre
         if movimiento % 2 == 0:
             player = 2
         else:
             player = 1
         
         if movimiento > 6: # ckeckea si hay 4 en ralla (los primeros 6 movimientos no porque es imposible y asi es un poquito mas eficiente)
-            check_cuatrejo_en_rallejo(board, player)
+            if check_cuatrejo_en_rallejo(board, player):
+                print("Ganador: " + player)
+                break
         
         movimiento += 1
