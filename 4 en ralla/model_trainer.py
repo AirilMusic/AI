@@ -74,9 +74,42 @@ def check_cuatrejo_en_rallejo(board, player, last_column):
 
 partida = 1
 
+# AHORA TOCA LA IA BAILONGA, AlphaFisting, osea, quiero decir, AlphaFir jajaja
+
+class AlphaFir:
+    def __init__(self, state, parent=None):
+        self.state = state
+        self.parent = parent
+        self.children = {}
+        self.visits = 0
+        self.value = 0
+
+def MCTS(root, model):
+    for i in range(800):
+        pass
+
+def best_move(root):
+    return max(root.children.items(), key=lambda item: item[1].visits)[0]
+
+def build_model():
+    board_input = tf.keras.layers.Input(shape=(6, 7, 1), name='board_input')
+    x = tf.keras.layers.Conv2D(64, (3, 3), activation='relu')(board_input)
+    x = tf.keras.layers.Flatten()(x)
+    policy_head = tf.keras.layers.Dense(7, activation='softmax', name='policy')(x)
+    value_head = tf.keras.layers.Dense(1, activation='tanh', name='value')(x)
+
+    model = tf.keras.models.Model(inputs=[board_input], outputs=[policy_head, value_head])
+    model.compile(optimizer='adam', loss=['categorical_crossentropy', 'mean_squared_error'])
+
+    return model
+
+model = build_model()
+
 while True:
     movimiento = 1
     board = tablero_base.copy()
+    column = 0
+    root = AlphaFir(board)
 
     while True: # comienza la partida: ave cesar, gallina tu madre
         if movimiento % 2 == 0:
@@ -85,7 +118,7 @@ while True:
             player = 1
         
         if movimiento > 6: # ckeckea si hay 4 en ralla (los primeros 6 movimientos no porque es imposible y asi es un poquito mas eficiente)
-            if check_cuatrejo_en_rallejo(board, player):
+            if check_cuatrejo_en_rallejo(board, player, column):
                 print("Ganador: " + player)
                 partida += 1
                 break
