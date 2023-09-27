@@ -7,7 +7,6 @@ from tensorflow import keras
 import numpy as np
 import os
 
-changes_ratio = 20 # a las x partidas baja a 10, y a las x partidas a 5 y asi hasta llegar a 2 o 1, si se carga un modelo ya entrenado empieza con 10 y con ese x de partidas
 partida = 0
 
 tablero_base = [[0, 0, 0, 0, 0, 0, 0],
@@ -72,55 +71,125 @@ def check_cuatrejo_en_rallejo(board, player, last_column):
 
     return False
 
-partida = 1
-
 # AHORA TOCA LA IA BAILONGA, AlphaFisting, osea, quiero decir, AlphaFir jajaja
 
-class AlphaFir:
-    def __init__(self, state, parent=None):
-        self.state = state
+# PRIMERO EL ARBOL DE PROBABILIDADES PARA EL HACER UN DATASET DE LA MEJOR JUGADA PARA CADA CASO
+
+class Node: # un nodo del arbol de probabilidades
+    def __init__(self, board, player, parent=None):
+        self.board = board.copy()
+        self.player = player
         self.parent = parent
-        self.children = {}
+        self.children = []
         self.visits = 0
         self.value = 0
+        self.expanded = False
 
-def MCTS(root, model):
-    for i in range(800):
-        pass
+    def expand(self):
+        for col in range(len(self.board[0])):
+            if self.board[0][col] == 0:
+                new_board = place_a_tile(self.board, col, self.player)
+                child_node = Node(new_board, 3 - self.player, self)
+                self.children.append(child_node)
+        self.expanded = True
+
+    def best_child(self, exploration_weight=1.):
+        scores = [(child.value / (child.visits + 1e-7)) + exploration_weight * np.sqrt(np.log(self.visits + 1) / (child.visits + 1e-7)) for child in self.children]
+        return self.children[np.argmax(scores)]
+
+training_data = []
+
+def MCTS(root, simulations=1000):
+    for i in range(simulations):
+        node = root
+
+        while node.expanded and node.children:
+            node = node.best_child()
+
+        if not node.expanded:
+            node.expand()
+
+        outcome = random_simulation(node.board, node.player)
+
+        while node:
+            node.visits += 1
+            node.value += outcome
+            training_data.append((node.board, best_move(node)))
+            node = node.parent
+
+def empate(board):
+    for columna in board:
+        if 0 in columna:
+            return False
+    return True
+
+def random_simulation(board, player):
+    while True:
+        if empate(board):
+            return 0
+        col = random.choice(range(len(board[0])))
+        if board[0][col] == 0:
+            board = place_a_tile(board, col, player)
+            if check_cuatrejo_en_rallejo(board, player, col):
+                return 1 if player == 1 else -1
+            player = 3 - player
+        else:
+            continue
 
 def best_move(root):
-    return max(root.children.items(), key=lambda item: item[1].visits)[0]
+    child = root.best_child(exploration_weight=0)
+    return root.children.index(child)
 
-def build_model():
-    board_input = tf.keras.layers.Input(shape=(6, 7, 1), name='board_input')
-    x = tf.keras.layers.Conv2D(64, (3, 3), activation='relu')(board_input)
-    x = tf.keras.layers.Flatten()(x)
-    policy_head = tf.keras.layers.Dense(7, activation='softmax', name='policy')(x)
-    value_head = tf.keras.layers.Dense(1, activation='tanh', name='value')(x)
+# Y AHORA UN MODELO QUE APRENDE CON ESE DATASET A PREDECIR LA MEJOR JUGADA (no se hace un dataset entero sino que varios pequeños con los que se va entrenando poquito a poquito)
 
-    model = tf.keras.models.Model(inputs=[board_input], outputs=[policy_head, value_head])
-    model.compile(optimizer='adam', loss=['categorical_crossentropy', 'mean_squared_error'])
+model = keras.models.Sequential(
+    keras.layers.InputLayer(input_shape=(6, 7, 1)),
 
-    return model
+    keras.layers.Conv2D(32, (3, 3), padding="same", activation="relu"),
+    keras.layers.Conv2D(64, (3, 3), padding="same", activation="relu"),
+    keras.layers.Conv2D(128, (3, 3), padding="same", activation="relu"),
 
-model = build_model()
+    keras.layers.Flatten(),
+    keras.layers.Dense(128, activation="relu"),
+    keras.layers.Dense(300, activation="relu"),
+    keras.layers.Dense(400, activation="relu"),
+    keras.layers.Dense(600, activation="relu"),
+    keras.layers.Dense(600, activation="relu"),
+    keras.layers.Dense(600, activation="relu"),
+    keras.layers.Dense(400, activation="relu"),
+    keras.layers.Dense(300, activation="relu"),
+    keras.layers.Dense(128, activation="relu"),
+
+    keras.layers.Dense(7, activation="softmax"))
+
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
 while True:
     movimiento = 1
     board = tablero_base.copy()
     column = 0
-    root = AlphaFir(board)
+    root = Node(board, 1)
 
     while True: # comienza la partida: ave cesar, gallina tu madre
         if movimiento % 2 == 0:
             player = 2
         else:
             player = 1
-        
+
+        if player == 1:
+            MCTS(root, simulations=1000)
+            column = best_move(root)
+            board = place_a_tile(board, column, player)
+
+        else:
+            column = random.choice(range(7))
+            while board[0][column] != 0:
+                column = random.choice(range(7))
+            board = place_a_tile(board, column, player)
+
         if movimiento > 6: # ckeckea si hay 4 en ralla (los primeros 6 movimientos no porque es imposible y asi es un poquito mas eficiente)
             if check_cuatrejo_en_rallejo(board, player, column):
-                print("Ganador: " + player)
-                partida += 1
+                print("Ganador: " + str(player))
                 break
-        
+
         movimiento += 1
