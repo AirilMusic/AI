@@ -7,7 +7,7 @@ from tensorflow import keras
 import numpy as np
 import os
 
-partida = 0
+partida = 1
 
 tablero_base = [[0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0],
@@ -30,9 +30,9 @@ def place_a_tile(tablero, column, player):
     numerajo_mas_bajo = 0 # el numerajo mas bajo es el numero del bichajo
     unajo = 1
 
-    for i in tablero:
-        if tablero[column] == 0:
-            nujmerajo_mas_bajo += unajo
+    for i in range(len(tablero)):
+        if tablero[i][column] == 0:
+            numerajo_mas_bajo = i
         else:
             break
 
@@ -86,14 +86,23 @@ class Node: # un nodo del arbol de probabilidades
         self.expanded = False
 
     def expand(self):
+        valid_moves = False
         for col in range(len(self.board[0])):
             if self.board[0][col] == 0:
+                valid_moves = True
                 new_board = place_a_tile(self.board, col, self.player)
                 child_node = Node(new_board, 3 - self.player, self)
                 self.children.append(child_node)
+        if not valid_moves:
+            self.expanded = True
+            return False
         self.expanded = True
+        return True
 
     def best_child(self, exploration_weight=1.):
+        if not self.children:
+            return None
+
         scores = [(child.value / (child.visits + 1e-7)) + exploration_weight * np.sqrt(np.log(self.visits + 1) / (child.visits + 1e-7)) for child in self.children]
         return self.children[np.argmax(scores)]
 
@@ -138,11 +147,13 @@ def random_simulation(board, player):
 
 def best_move(root):
     child = root.best_child(exploration_weight=0)
+    if child is None:
+        raise ValueError("No children to choose from!")
     return root.children.index(child)
 
 # Y AHORA UN MODELO QUE APRENDE CON ESE DATASET A PREDECIR LA MEJOR JUGADA (no se hace un dataset entero sino que varios pequeños con los que se va entrenando poquito a poquito)
 
-model = keras.models.Sequential(
+model = keras.models.Sequential([
     keras.layers.InputLayer(input_shape=(6, 7, 1)),
 
     keras.layers.Conv2D(32, (3, 3), padding="same", activation="relu"),
@@ -160,7 +171,8 @@ model = keras.models.Sequential(
     keras.layers.Dense(300, activation="relu"),
     keras.layers.Dense(128, activation="relu"),
 
-    keras.layers.Dense(7, activation="softmax"))
+    keras.layers.Dense(7, activation="softmax")
+])
 
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
@@ -171,6 +183,8 @@ while True:
     root = Node(board, 1)
 
     while True: # comienza la partida: ave cesar, gallina tu madre
+        print("\n[+] Partida: " + str(partida))
+
         if movimiento % 2 == 0:
             player = 2
         else:
@@ -189,7 +203,17 @@ while True:
 
         if movimiento > 6: # ckeckea si hay 4 en ralla (los primeros 6 movimientos no porque es imposible y asi es un poquito mas eficiente)
             if check_cuatrejo_en_rallejo(board, player, column):
-                print("Ganador: " + str(player))
+                partida += 1
                 break
 
         movimiento += 1
+
+    if partida % 10 == 0:
+        boards, moves = zip(*training_data)
+        boards_np = np.array(boards).reshape(-1, 6, 7, 1)
+        moves_np = keras.utils.to_categorical(moves, 7)
+
+        model.fit(boards_np, moves_np, epochs=500, batch_size=32)
+        training_data.clear()
+
+        save_network(model, "AlphaFir")
