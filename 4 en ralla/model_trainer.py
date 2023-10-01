@@ -6,7 +6,6 @@ import tensorflow as tf
 from tensorflow import keras
 import numpy as np
 import os
-import time
 
 partida = 1
 
@@ -158,18 +157,38 @@ model = keras.models.Sequential([
     keras.layers.InputLayer(input_shape=(6, 7, 1)),
 
     keras.layers.Conv2D(32, (3, 3), padding="same", activation="relu"),
+    keras.layers.Dropout(0.25),
     keras.layers.Conv2D(64, (3, 3), padding="same", activation="relu"),
+    keras.layers.Dropout(0.25),
+    keras.layers.Conv2D(64, (3, 3), padding="same", activation="relu"),
+    keras.layers.Dropout(0.25),
+    keras.layers.Conv2D(64, (3, 3), padding="same", activation="relu"),
+    keras.layers.Dropout(0.25),
+    keras.layers.Conv2D(128, (3, 3), padding="same", activation="relu"),
+    keras.layers.Dropout(0.25),
     keras.layers.Conv2D(128, (3, 3), padding="same", activation="relu"),
 
     keras.layers.Flatten(),
     keras.layers.Dense(128, activation="relu"),
+    keras.layers.Dropout(0.25),
     keras.layers.Dense(300, activation="relu"),
+    keras.layers.Dropout(0.25),
     keras.layers.Dense(400, activation="relu"),
+    keras.layers.Dropout(0.25),
     keras.layers.Dense(600, activation="relu"),
+    keras.layers.Dropout(0.25),
     keras.layers.Dense(600, activation="relu"),
+    keras.layers.Dropout(0.25),
     keras.layers.Dense(600, activation="relu"),
+    keras.layers.Dropout(0.25),
+    keras.layers.Dense(600, activation="relu"),
+    keras.layers.Dropout(0.25),
+    keras.layers.Dense(600, activation="relu"),
+    keras.layers.Dropout(0.25),
     keras.layers.Dense(400, activation="relu"),
+    keras.layers.Dropout(0.25),
     keras.layers.Dense(300, activation="relu"),
+    keras.layers.Dropout(0.25),
     keras.layers.Dense(128, activation="relu"),
 
     keras.layers.Dense(7, activation="softmax")
