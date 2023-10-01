@@ -223,12 +223,14 @@ while True:
 
         movimiento += 1
 
-    if partida % 10 == 0:
+    if partida % 1000 == 0:
         boards, moves = zip(*[(board, move) for board, move in training_data if move is not None])
-        boards_np = np.array(boards).reshape(-1, 6, 7, 1)
-        moves_np = keras.utils.to_categorical(moves, 7)
+        if any(move is not None for _, move in training_data):
+            boards, moves = zip(*[(board, move) for board, move in training_data if move is not None])
+            boards_np = np.array(boards).reshape(-1, 6, 7, 1)
+            moves_np = keras.utils.to_categorical(moves, 7)
 
-        model.fit(boards_np, moves_np, epochs=100, batch_size=32)
-        training_data.clear()
+            model.fit(boards_np, moves_np, epochs=100, batch_size=32)
+            training_data.clear()
 
-        save_network(model, "AlphaFir")
+            save_network(model, "AlphaFir")
