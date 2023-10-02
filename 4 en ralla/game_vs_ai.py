@@ -30,10 +30,16 @@ def draw_board(board):
         pygame.draw.rect(screen, (145, 244, 237), (col*100, 600, 100, 50))
         pygame.draw.rect(screen, (0,0,0), (col*100, 600, 100, 50), 2)
 
+column = 0
+predicted_move = 0
+
 def detect_click(pos, player):
+    global column
     column = pos[0] // 100
-    if 600 <= pos[1] <= 650:
-        place_a_tile(tablero_base, column, player)
+    if 600 <= pos[1] <= 650 and board[0][column] == 0:
+        place_a_tile(board, column, player)
+        return True
+    return False
 
 def load_network():
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -48,7 +54,19 @@ def load_network():
         print("[-] Model not found at", model_path)
         return None
 
-tablero_base = [[0, 0, 0, 0, 0, 0, 0],
+def predict_move(board, model):
+    board_np = np.array(board).reshape(1, 6, 7, 1)
+    
+    predictions = model.predict(board_np)[0]
+    best_move = np.argmax(predictions)
+
+    while board[0][best_move] != 0:
+        predictions[best_move] = -1
+        best_move = np.argmax(predictions)
+
+    return best_move
+
+board = [[0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0],
@@ -109,23 +127,49 @@ def empate(board):
 model = load_network()
 
 running = True
-current_player = 1
 
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_pos = pygame.mouse.get_pos()
-            if mouse_pos[1] > 600:
-                detect_click(mouse_pos, current_player)
-                current_player = 3 - current_player
+while True:
+    board = [[0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0]]
     
+    jugador_precoz = random.choice([1,2]) # jeje no dura ni 10 segundos
     screen.fill((0,0,0))
-    draw_board(tablero_base)
+    draw_board(board)
     pygame.display.flip()
-    CLOCK.tick(60)
-    
-    jugador = random.choice([1,2])
 
-pygame.quit()
+    while running:
+        column = predicted_move
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.MOUSEBUTTONDOWN and jugador_precoz == 1:
+                mouse_pos = pygame.mouse.get_pos()
+                if detect_click(mouse_pos, jugador_precoz):
+                    jugador_precoz = 3 - jugador_precoz
+                    screen.fill((0,0,0))
+                    draw_board(board)
+                    pygame.display.flip()
+                    time.sleep(random.choice([0.3, 0.5, 0.7, 0.1, 0.8, 1.2, 0.4]))
+
+        if check_cuatrejo_en_rallejo(board, 1, column) or empate(board):
+            time.sleep(5)
+            break
+
+        if jugador_precoz == 2:  # IA
+            predicted_move = predict_move(board, model)
+            place_a_tile(board, predicted_move, jugador_precoz)
+            time.sleep(1)
+            jugador_precoz = 3 - jugador_precoz
+
+        screen.fill((0,0,0))
+        draw_board(board)
+        pygame.display.flip()
+        CLOCK.tick(60)
+
+        if check_cuatrejo_en_rallejo(board, 2, predicted_move) or empate(board):
+            time.sleep(5)
+            break
